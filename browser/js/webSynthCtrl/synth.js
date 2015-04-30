@@ -55,9 +55,9 @@ angular
         }
 
         function _onmidimessage(e) {
-            console.log("Midi message");
+            //console.log("Midi message");
             //console.log(e);
-            console.log("On/off indicator? ", e.data[0], ". Note: ", e.data[1], ". Velocity: ", e.data[2]);
+            console.log("On/off/detune indicator ", e.data[0], ". Note: ", e.data[1], ". Velocity: ", e.data[2]);
             /**
             * e.data is an array
             * e.data[0] = on (144) / off (128) / detune (224)
