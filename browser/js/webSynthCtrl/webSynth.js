@@ -18,8 +18,19 @@ angular
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
             console.log(triggered);
             $scope.triggeredArr = triggered;
+            $scope.activated(triggered[triggered.length-1]);
             $scope.$digest();
         });
+
+        $scope.activated = function (id) {
+            return $scope.triggeredArr.indexOf(id) !== -1;
+        };
+
+        $scope.triggered = function(pad) {
+            console.log($scope.triggeredArr[0][1]);
+            console.log("Pad", pad);
+            return $scope.triggeredArr[0][1] === pad;
+        };
 
         devices
             .connect()
@@ -33,7 +44,7 @@ angular
                         var inputs = access.inputs.values(),
                         input, device;
 
-                        // iterate through the devices
+                        // iterate through the devicesz
                         for (input = inputs.next(); input && !input.done; input = inputs.next()) {
                             $scope.devices.push(input.value);
                         }
@@ -51,9 +62,6 @@ angular
             });
 
         // watchers
-        // $scope.$watch('DSP.triggered', function(){
-        //     console.log("Watch Fire")
-        // });
         $scope.$watch('activeDevice', DSP.plug);
         $scope.$watch('synth.oscType', DSP.setOscType);
         $scope.$watch('synth.filterOn', DSP.enableFilter);
