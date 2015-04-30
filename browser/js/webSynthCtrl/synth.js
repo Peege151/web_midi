@@ -12,6 +12,7 @@ angular
                 self.device.onmidimessage = null;
             }
             self.device = null;
+
         }
         function _plug(device) {
             if(device) {
@@ -22,6 +23,7 @@ angular
 
                 self.device = device;
                 self.device.onmidimessage = _onmidimessage;
+                console.log(device)
             }
         }
         var callback;
@@ -53,10 +55,22 @@ angular
 
         function _onmidimessage(e) {
             //console.log("Midi message");
-            //console.log(e);
             if(e.data[0] === 144) self.triggered.push(e.data);
-            callback(self.triggered)
-            console.log(self.triggered)
+
+            if(e.data[0] === 128) {
+                var noteToRemove = e.data[1];
+                self.triggered.forEach(function(element, index) {
+                    //console.log("This is index: ", index);
+                    if (e.data[1] === element[1]) {
+                        self.triggered.splice(index, 1);
+                    }          
+                });
+            }
+
+
+            callback(self.triggered);
+            //console.log(self.triggered[0][1]);
+            
             //console.log("On/off/detune indicator ", e.data[0], ". Note: ", e.data[1], ". Velocity: ", e.data[2]);
             /**
             * e.data is an array
@@ -67,26 +81,23 @@ angular
             switch(e.data[0]) {
                 case 144:
                     Engine.noteOn(e.data[1], e.data[2]);
-                    return e;
                 break;
                 case 128:
                     Engine.noteOff(e.data[1]);
-                    return e;
                 break;
                 case 224:
                     Engine.detune(e.data[2]);
-                    return e;
                 break;
             }
         }
         function _returnTriggered (cb){
-            console.log("get it?")
-            callback = cb
-            return self.triggered
+            //console.log("get it?");
+            callback = cb;
+            return self.triggered;
         }
         function _onmessage(e) {
             if(e && e.data) {
-                console.log(e);
+                //console.log(e);
                 _onmidimessage(e.data);
             }
         }
@@ -102,6 +113,7 @@ angular
         }
 
         return {
+            onmidimessage: _onmidimessage,
             triggered: self.triggered,
             returnTriggered: _returnTriggered,
             createAnalyser: _createAnalyser,

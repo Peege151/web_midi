@@ -1,6 +1,7 @@
 <section id="home">
 	<div class="synth container" ng-controller="WebSynthCtrl">
 
+	    {{ triggeredArr }}
 	    <h1>webaudio synth</h1>
 	    <div class="form-group">
 	        <select ng-model="activeDevice" class="form-control" ng-options="device.manufacturer + ' ' + device.name for device in devices">
@@ -62,27 +63,19 @@
 	    </div>
 	    <br>
 	    <div class="col-lg-12 col-md-12 col-sm-12">
-
-	    <div class="korg-border">
+	    <div class="korg-border" ng-show="activeDevice">
 	    	<div class="pad-row" >
-	    		<span class="pad"  ng-class="{red: triggered}" id="row-0-{{$index}}" ng-repeat="pad in [0,1,2,3]">
-	    			
-	  	    	</span>
-	    	</div>
-	    	<div class="pad-row">
-	    		<span class="pad" ng-class="{red: triggered}" id="row-1-{{$index}}" ng-repeat="pad in [0,1,2,3]">
-	    		   
-	    		</span>	
-	    	</div>
-	    	<div class="pad-row">
-	    		<span class="pad" ng-class="{red: triggered}" id="row-2-{{$index}}" ng-repeat="pad in [0,1,2,3]">
-	    			
+	    		<span class="pad"ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [72,73,74,75]">
 	    		</span>
 	    	</div>
 	    	<div class="pad-row">
-	    		<span class="pad" ng-class="{red: triggered}" id="row-3-{{$index}}" ng-repeat="pad in [0,1,2,3]">
-	    			
-	    		</span>
+	    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [68,69,70,71]"></span>	
+	    	</div>
+	    	<div class="pad-row">
+	    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [64,65,66,67]"></span>
+	    	</div>
+	    	<div class="pad-row">
+	    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [60,61,62,63]"></span>
 	    	</div>
 	    </div>
 	</div>

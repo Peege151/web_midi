@@ -15,11 +15,38 @@ angular
             attack: 0.05,
             release: 0.05
         };
+        $scope.destroyUIMidi = function(pad){
+            var midiData =  new Uint8Array([128, pad, 127])
+            console.log("HI from mouse-up")
+            DSP.onmidimessage({data: midiData})        }
+        $scope.createUIMidi = function(pad){
+           var midiData =  new Uint8Array([144, pad, 127])
+           //console.log(typeof midiData)
+           console.log("HI from mouse-down")
+
+           DSP.onmidimessage({data: midiData})
+        }
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
-            console.log(triggered)
+            //console.log(triggered);
             $scope.triggeredArr = triggered;
-            $scope.$digest()
+            $scope.activated(triggered[triggered.length-1]);
+            $scope.$digest();
         });
+
+        $scope.activated = function (id) {
+            return $scope.triggeredArr.indexOf(id) !== -1;
+        };
+
+        $scope.triggered = function(pad) {
+            if ($scope.triggeredArr.length) {
+                for(var i = 0; i < $scope.triggeredArr.length; i++){
+                    for(var j=0; j< $scope.triggeredArr[i].length; j++){
+                        if($scope.triggeredArr[i][j] == pad) return true
+                    }
+                }
+            }
+            return false;
+        };
 
         devices
             .connect()
@@ -33,7 +60,7 @@ angular
                         var inputs = access.inputs.values(),
                         input, device;
 
-                        // iterate through the devices
+                        // iterate through the devicesz
                         for (input = inputs.next(); input && !input.done; input = inputs.next()) {
                             $scope.devices.push(input.value);
                         }
@@ -51,9 +78,6 @@ angular
             });
 
         // watchers
-        // $scope.$watch('DSP.triggered', function(){
-        //     console.log("Watch Fire")
-        // });
         $scope.$watch('activeDevice', DSP.plug);
         $scope.$watch('synth.oscType', DSP.setOscType);
         $scope.$watch('synth.filterOn', DSP.enableFilter);
