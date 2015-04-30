@@ -9,10 +9,33 @@
     clear: both;
   }
 }
+.korg-border {
+	position: block;
+	width:100%;
+	margin:0 auto;
+	padding:10px;
+	.pad-row {
+		height:110px;
+		width:100%;
+		margin-bottom: 2px;
+
+		span.pad {
+			display:inline-block;
+			width:24%;
+			border:2px solid black;
+			height: 100px;
+			border-radius: 10px;
+			margin-left:1%;
+		}
+	}
+
+}
 .red {
 	color:red;
 	background-color: yellow;
 }
+	
+
 
 @import 'directives/main';
 @import 'home/main';
