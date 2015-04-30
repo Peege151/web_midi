@@ -16,9 +16,9 @@ angular
             release: 0.05
         };
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
-            console.log(triggered)
+            console.log(triggered);
             $scope.triggeredArr = triggered;
-            $scope.$digest()
+            $scope.$digest();
         });
 
         devices
