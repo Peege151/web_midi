@@ -59,7 +59,7 @@ angular
             if(e.data[0] === 128) {
                 var noteToRemove = e.data[1];
                 self.triggered.forEach(function(element, index) {
-                    console.log("This is index: ", index);
+                    //console.log("This is index: ", index);
                     if (e.data[1] === element[1]) {
                         self.triggered.splice(index, 1);
                     }          
@@ -90,13 +90,13 @@ angular
             }
         }
         function _returnTriggered (cb){
-            console.log("get it?");
+            //console.log("get it?");
             callback = cb;
             return self.triggered;
         }
         function _onmessage(e) {
             if(e && e.data) {
-                console.log(e);
+                //console.log(e);
                 _onmidimessage(e.data);
             }
         }

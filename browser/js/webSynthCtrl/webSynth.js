@@ -16,7 +16,7 @@ angular
             release: 0.05
         };
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
-            console.log(triggered);
+            //console.log(triggered);
             $scope.triggeredArr = triggered;
             $scope.activated(triggered[triggered.length-1]);
             $scope.$digest();
@@ -27,9 +27,12 @@ angular
         };
 
         $scope.triggered = function(pad) {
-            console.log($scope.triggeredArr[0][1]);
-            console.log("Pad", pad);
-            return $scope.triggeredArr[0][1] === pad;
+            //console.log($scope.triggeredArr[0][1]);
+            //console.log("Pad", pad);
+            if ($scope.triggeredArr.length) {
+                return $scope.triggeredArr[0][1] === pad;
+            }
+            else return false;
         };
 
         devices
