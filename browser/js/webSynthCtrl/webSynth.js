@@ -27,12 +27,14 @@ angular
         };
 
         $scope.triggered = function(pad) {
-            //console.log($scope.triggeredArr[0][1]);
-            //console.log("Pad", pad);
             if ($scope.triggeredArr.length) {
-                return $scope.triggeredArr[0][1] === pad;
+                for(var i = 0; i < $scope.triggeredArr.length; i++){
+                    for(var j=0; j< $scope.triggeredArr[i].length; j++){
+                        if($scope.triggeredArr[i][j] == pad) return true
+                    }
+                }
             }
-            else return false;
+            return false;
         };
 
         devices

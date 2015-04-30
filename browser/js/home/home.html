@@ -66,17 +66,16 @@
 	    <div class="korg-border">
 	    	<div class="pad-row" >
 	    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [72,73,74,75]">
-	    			{{triggeredArr}} // {{pad}}
 	    		</span>
 	    	</div>
 	    	<div class="pad-row">
-	    		<span class="pad" ng-class="{red: triggered}" id="{{pad}}" ng-repeat="pad in [68,69,70,71]"></span>	
+	    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [68,69,70,71]"></span>	
 	    	</div>
 	    	<div class="pad-row">
-	    		<span class="pad" ng-class="{red: triggered}" id="{{pad}}" ng-repeat="pad in [64,65,66,67]"></span>
+	    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [64,65,66,67]"></span>
 	    	</div>
 	    	<div class="pad-row">
-	    		<span class="pad" ng-class="{red: triggered}" id="{{pad}}" ng-repeat="pad in [60,61,62,63]"></span>
+	    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [60,61,62,63]"></span>
 	    	</div>
 	    </div>
 	</div>
