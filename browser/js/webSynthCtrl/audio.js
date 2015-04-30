@@ -197,7 +197,6 @@ angular
 
         function _noteOn(note, velocity) {
             self.activeNotes.push(note);
-
             self.osc1.cancel();
             self.currentFreq = _mtof(note);
             self.osc1.setFrequency(self.currentFreq + self.detuneAmount, self.settings.portamento);

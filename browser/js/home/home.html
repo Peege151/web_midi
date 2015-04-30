@@ -59,6 +59,21 @@
 	            <input type="range" class="form-control" min="50" max="1000" ng-model="synth.release" />
 	        </div>
 	    </div>
+	    <div ng-model="DSP.triggered">{{DSP.triggered}}</div>
+	    <div class="korg-border">
+	    	<span class="pad-row"  ng-class="{red: triggered}" id="row-0-{{$index}}" ng-repeat="pad in [0,1,2,3]">
+	    		HELLO
+	    	</span><br>
+	    	<span class="pad-row" ng-class="{red: triggered}" id="row-1-{{$index}}" ng-repeat="pad in [0,1,2,3]">
+	    		HELLO
+	    	</span><br>
+	    	<span class="pad-row" ng-class="{red: triggered}" id="row-2-{{$index}}" ng-repeat="pad in [0,1,2,3]">
+	    		HELLO
+	    	</span><br>
+	    	<span class="pad-row" ng-class="{red: triggered}" id="row-3-{{$index}}" ng-repeat="pad in [0,1,2,3]">
+	    		HELLO
+	    	</span><br>
+	    </div>
 	</div>
     <fullstack-logo></fullstack-logo>
     <rando-greeting></rando-greeting>

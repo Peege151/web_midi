@@ -3,10 +3,9 @@ angular
     .controller('WebSynthCtrl', ['$scope', 'Devices', 'DSP', function($scope, devices, DSP) {
         $scope.devices = [];
         $scope.analyser = null;
-
         $scope.oscTypes = ['sine', 'square', 'triangle', 'sawtooth'];
         $scope.filterTypes = ['lowpass', 'highpass'];
-
+        $scope.DSP = DSP;
         $scope.synth = {
             oscType: 'sine',
             filterType: 'lowpass',
@@ -16,6 +15,11 @@ angular
             attack: 0.05,
             release: 0.05
         };
+        $scope.triggeredArr = DSP.returnTriggered(function(triggered){
+            console.log(triggered)
+            $scope.triggeredArr = triggered;
+            $scope.$digest()
+        });
 
         devices
             .connect()
@@ -47,6 +51,9 @@ angular
             });
 
         // watchers
+        // $scope.$watch('DSP.triggered', function(){
+        //     console.log("Watch Fire")
+        // });
         $scope.$watch('activeDevice', DSP.plug);
         $scope.$watch('synth.oscType', DSP.setOscType);
         $scope.$watch('synth.filterOn', DSP.enableFilter);
@@ -55,7 +62,6 @@ angular
         $scope.$watch('synth.filterRes', DSP.setFilterResonance);
         $scope.$watch('synth.attack', DSP.setAttack);
         $scope.$watch('synth.release', DSP.setRelease);
-
         // support for computer keyboard
         $scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
     }]);

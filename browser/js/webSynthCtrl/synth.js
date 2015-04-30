@@ -1,21 +1,18 @@
 angular
     .module('Synth', ['WebAudio', 'WebAnalyser', 'Keyboard'])
-    .factory('DSP', ['AudioEngine', 'Analyser', '$window', 'KeyboardHandler', function(Engine, Analyser, $window, Keyboard) {
+    .factory('DSP', ['AudioEngine', 'Analyser', '$window','KeyboardHandler', function(Engine, Analyser, $window, Keyboard) {
         var self = this;
         self.device = null;
         self.analyser = null;
         self.useKeyboard = false;
-
         Engine.init();
-
+        self.triggered = [];
         function _unplug() {
             if(self.device && self.device.onmidimessage) {
                 self.device.onmidimessage = null;
             }
-
             self.device = null;
         }
-
         function _plug(device) {
             if(device) {
                 // unplug any already connected device
@@ -27,7 +24,7 @@ angular
                 self.device.onmidimessage = _onmidimessage;
             }
         }
-
+        var callback;
         function _switchKeyboard(on) {
             if(on !== undefined) {
                 _unplug();
@@ -57,7 +54,10 @@ angular
         function _onmidimessage(e) {
             //console.log("Midi message");
             //console.log(e);
-            console.log("On/off/detune indicator ", e.data[0], ". Note: ", e.data[1], ". Velocity: ", e.data[2]);
+            if(e.data[0] === 144) self.triggered.push(e.data);
+            callback(self.triggered)
+            console.log(self.triggered)
+            //console.log("On/off/detune indicator ", e.data[0], ". Note: ", e.data[1], ". Velocity: ", e.data[2]);
             /**
             * e.data is an array
             * e.data[0] = on (144) / off (128) / detune (224)
@@ -67,16 +67,23 @@ angular
             switch(e.data[0]) {
                 case 144:
                     Engine.noteOn(e.data[1], e.data[2]);
+                    return e;
                 break;
                 case 128:
                     Engine.noteOff(e.data[1]);
+                    return e;
                 break;
                 case 224:
                     Engine.detune(e.data[2]);
+                    return e;
                 break;
             }
         }
-
+        function _returnTriggered (cb){
+            console.log("get it?")
+            callback = cb
+            return self.triggered
+        }
         function _onmessage(e) {
             if(e && e.data) {
                 console.log(e);
@@ -95,6 +102,8 @@ angular
         }
 
         return {
+            triggered: self.triggered,
+            returnTriggered: _returnTriggered,
             createAnalyser: _createAnalyser,
             enableFilter: _enableFilter,
             plug: _plug,

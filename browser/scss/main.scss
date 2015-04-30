@@ -9,6 +9,10 @@
     clear: both;
   }
 }
+.red {
+	color:red;
+	background-color: yellow;
+}
 
 @import 'directives/main';
 @import 'home/main';
