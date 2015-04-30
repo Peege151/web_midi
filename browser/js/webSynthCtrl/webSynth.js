@@ -15,6 +15,17 @@ angular
             attack: 0.05,
             release: 0.05
         };
+        $scope.destroyUIMidi = function(pad){
+            var midiData =  new Uint8Array([128, pad, 127])
+            console.log("HI from mouse-up")
+            DSP.onmidimessage({data: midiData})        }
+        $scope.createUIMidi = function(pad){
+           var midiData =  new Uint8Array([144, pad, 127])
+           //console.log(typeof midiData)
+           console.log("HI from mouse-down")
+
+           DSP.onmidimessage({data: midiData})
+        }
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
             //console.log(triggered);
             $scope.triggeredArr = triggered;

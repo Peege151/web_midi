@@ -12,6 +12,7 @@ angular
                 self.device.onmidimessage = null;
             }
             self.device = null;
+
         }
         function _plug(device) {
             if(device) {
@@ -22,6 +23,7 @@ angular
 
                 self.device = device;
                 self.device.onmidimessage = _onmidimessage;
+                console.log(device)
             }
         }
         var callback;
@@ -53,7 +55,6 @@ angular
 
         function _onmidimessage(e) {
             //console.log("Midi message");
-            //console.log(e);
             if(e.data[0] === 144) self.triggered.push(e.data);
 
             if(e.data[0] === 128) {
@@ -112,6 +113,7 @@ angular
         }
 
         return {
+            onmidimessage: _onmidimessage,
             triggered: self.triggered,
             returnTriggered: _returnTriggered,
             createAnalyser: _createAnalyser,

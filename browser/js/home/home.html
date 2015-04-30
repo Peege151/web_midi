@@ -63,9 +63,9 @@
 	    </div>
 	    <br>
 	    <div class="col-lg-12 col-md-12 col-sm-12">
-	    <div class="korg-border">
+	    <div class="korg-border" ng-show="activeDevice">
 	    	<div class="pad-row" >
-	    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [72,73,74,75]">
+	    		<span class="pad"ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [72,73,74,75]">
 	    		</span>
 	    	</div>
 	    	<div class="pad-row">
