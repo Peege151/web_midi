@@ -55,8 +55,21 @@ angular
             //console.log("Midi message");
             //console.log(e);
             if(e.data[0] === 144) self.triggered.push(e.data);
+
+            if(e.data[0] === 128) {
+                var noteToRemove = e.data[1];
+                self.triggered.forEach(function(element, index) {
+                    console.log("This is index: ", index);
+                    if (e.data[1] === element[1]) {
+                        self.triggered.splice(index, 1);
+                    }          
+                });
+            }
+
+
             callback(self.triggered);
-            console.log(self.triggered);
+            //console.log(self.triggered[0][1]);
+            
             //console.log("On/off/detune indicator ", e.data[0], ". Note: ", e.data[1], ". Velocity: ", e.data[2]);
             /**
             * e.data is an array
