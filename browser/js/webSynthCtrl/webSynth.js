@@ -28,32 +28,49 @@ angular
         //    DSP.onmidimessage({data: midiData})
         // }
 
+        $scope.transport = Tone.Transport;
 
-        $scope.hello = function() {
-            //create one of Tone's built-in synthesizers
-            var synth = new Tone.MonoSynth();
-
-            //connect the synth to the master output channel
-            synth.toMaster();
-            synth.volume.value = -10;
-
-            //create a callback which is invoked every quarter note
-            Tone.Transport.setInterval(function(time){
-                //trigger middle C for the duration of an 8th note
-                synth.triggerAttackRelease("C4", "8n", time);
-            }, "4n");
-
-            //start the transport
-            Tone.Transport.start();
+        $scope.startTransport = function() { 
+            $scope.transport.start();
         };
 
-        $scope.startHello = function() {
-            $scope.hello();
+        $scope.stopTransport = function() {
+            $scope.transport.stop();
         };
-        
-        $scope.stopHello = function() {
-            Tone.Transport.stop();
+
+        $scope.metronome = null;
+
+        $scope.loadMetronome = function() {
+
+            if($scope.metronome === null) {
+                $scope.metronome = new Tone.Player("../../sounds/woodblock.wav");
+
+                Tone.Buffer.onload = function() {
+                    $scope.metronome.toMaster();
+
+                    $scope.transport.setInterval(function(time){
+                        $scope.metronome.start(time);
+                    }, "4n");
+                };
+            }
+            else {
+                $scope.metronome.volume.value = 0;
+            }
         };
+
+        $scope.pauseMetronome = function() {
+            //$scope.metronome.pause(1);
+            $scope.metronome.volume.value = -100;
+        };
+
+        $scope.setBpm = $scope.transport.bpm.value = 60;
+
+        $scope.startAll = function() {
+            $scope.startTransport();
+            $scope.loadMetronome();
+        };
+
+
 
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
             //console.log(triggered);
