@@ -15,17 +15,46 @@ angular
             attack: 0.05,
             release: 0.05
         };
-        $scope.destroyUIMidi = function(pad){
-            var midiData =  new Uint8Array([128, pad, 127])
-            console.log("HI from mouse-up")
-            DSP.onmidimessage({data: midiData})        }
-        $scope.createUIMidi = function(pad){
-           var midiData =  new Uint8Array([144, pad, 127])
-           //console.log(typeof midiData)
-           console.log("HI from mouse-down")
+        
+        // $scope.destroyUIMidi = function(pad){
+        //     var midiData =  new Uint8Array([128, pad, 127])
+        //     console.log("HI from mouse-up")
+        //     DSP.onmidimessage({data: midiData})        }
+        // $scope.createUIMidi = function(pad){
+        //    var midiData =  new Uint8Array([144, pad, 127])
+        //    //console.log(typeof midiData)
+        //    console.log("HI from mouse-down")
 
-           DSP.onmidimessage({data: midiData})
-        }
+        //    DSP.onmidimessage({data: midiData})
+        // }
+
+
+        $scope.hello = function() {
+            //create one of Tone's built-in synthesizers
+            var synth = new Tone.MonoSynth();
+
+            //connect the synth to the master output channel
+            synth.toMaster();
+            synth.volume.value = -10;
+
+            //create a callback which is invoked every quarter note
+            Tone.Transport.setInterval(function(time){
+                //trigger middle C for the duration of an 8th note
+                synth.triggerAttackRelease("C4", "8n", time);
+            }, "4n");
+
+            //start the transport
+            Tone.Transport.start();
+        };
+
+        $scope.startHello = function() {
+            $scope.hello();
+        };
+        
+        $scope.stopHello = function() {
+            Tone.Transport.stop();
+        };
+
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
             //console.log(triggered);
             $scope.triggeredArr = triggered;
