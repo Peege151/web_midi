@@ -5,8 +5,11 @@ angular
         self.device = null;
         self.analyser = null;
         self.useKeyboard = false;
-        Engine.init();
         self.triggered = [];
+        self.score = [];
+
+        Engine.init();
+
         function _unplug() {
             if(self.device && self.device.onmidimessage) {
                 self.device.onmidimessage = null;
@@ -23,7 +26,7 @@ angular
 
                 self.device = device;
                 self.device.onmidimessage = _onmidimessage;
-                console.log(device)
+                console.log(device);
             }
         }
         var callback;
@@ -55,7 +58,10 @@ angular
 
         function _onmidimessage(e) {
             //console.log("Midi message");
-            if(e.data[0] === 144) self.triggered.push(e.data);
+            if(e.data[0] === 144) {
+                self.triggered.push(e.data);
+                self.score.push();
+            }
 
             if(e.data[0] === 128) {
                 var noteToRemove = e.data[1];
