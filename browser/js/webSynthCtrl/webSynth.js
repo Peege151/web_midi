@@ -55,9 +55,10 @@ angular
         $scope.play = DSP.play;
         $scope.recordStart = DSP.recordStart;
         $scope.recordStop = DSP.recordStop;
+        $scope.getRecordingStatus = DSP.getRecordingStatus;
 
 
-        // Triggered and score
+        // Triggered and score arrays
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
             $scope.triggeredArr = triggered;
             $scope.activated(triggered[triggered.length-1]);

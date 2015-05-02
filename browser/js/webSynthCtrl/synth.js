@@ -180,15 +180,20 @@ angular
             self.recording = false;
         }
 
+        function _getRecordingStatus() {
+
+            return self.recording;
+        }
 
         return {
+            getRecordingStatus: _getRecordingStatus,
             onmidimessage: _onmidimessage,
-            returnTriggered: _returnTriggered,
-            returnScore: _returnScore,
             play: _play,
             plug: _plug,
             recordStart: _recordStart,
-            recordStop: _recordStop
+            recordStop: _recordStop,
+            returnTriggered: _returnTriggered,
+            returnScore: _returnScore
             //switchKeyboard: _switchKeyboard
         };
     }]);

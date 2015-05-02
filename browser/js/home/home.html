@@ -3,8 +3,8 @@
 
 		<!-- {{ triggeredArr }} -->
 	    <button class="btn" ng-click="play()">Play</button>
-	    <button class="btn" ng-click="recordStart()"><i class="fa fa-circle"></i> Record</button>
-	    <button class="btn" ng-click="recordStop()"><i class="fa fa-square"></i> Record</button>
+	    <button class="btn" ng-if="!getRecordingStatus()" ng-click="recordStart()"><i class="fa fa-circle"></i> Record</button>
+	    <button class="btn btn-danger" ng-if="getRecordingStatus()" ng-click="recordStop()"><i class="fa fa-square"></i> Record</button>
 	    {{ score }}
 
 	    <h1>Web MIDI API Drumpads</h1>
