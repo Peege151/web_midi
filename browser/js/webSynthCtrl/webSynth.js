@@ -2,19 +2,9 @@ angular
     .module('WebSynth', ['WebMIDI', 'Synth'])
     .controller('WebSynthCtrl', ['$scope', 'Devices', 'DSP', function($scope, devices, DSP) {
         $scope.devices = [];
-        $scope.analyser = null;
-        $scope.oscTypes = ['sine', 'square', 'triangle', 'sawtooth'];
-        $scope.filterTypes = ['lowpass', 'highpass'];
+        $scope.score = [];
         $scope.DSP = DSP;
-        $scope.synth = {
-            oscType: 'sine',
-            filterType: 'lowpass',
-            filterOn: false,
-            filterFreq: 50,
-            filterRes: 0,
-            attack: 0.05,
-            release: 0.05
-        };
+        
         
         // $scope.destroyUIMidi = function(pad){
         //     var midiData =  new Uint8Array([128, pad, 127])
@@ -28,6 +18,8 @@ angular
         //    DSP.onmidimessage({data: midiData})
         // }
 
+
+        // Transport and metronome
         $scope.transport = Tone.Transport;
 
         $scope.startTransport = function() { 
@@ -71,9 +63,8 @@ angular
         };
 
 
-
+        // Triggered and score
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
-            //console.log(triggered);
             $scope.triggeredArr = triggered;
             $scope.activated(triggered[triggered.length-1]);
             $scope.$digest();
@@ -94,6 +85,13 @@ angular
             return false;
         };
 
+        $scope.score = DSP.returnScore(function(score) {
+            //$scope.score.push(score);
+            console.log("score", score);
+            console.log("$scope.score",$scope.score);
+            $scope.$digest();
+        });
+
         devices
             .connect()
             .then(function(access) {
@@ -112,7 +110,7 @@ angular
                         }
 
                         // create the frequency analyser
-                        $scope.analyser = DSP.createAnalyser('#analyser');
+                        //$scope.analyser = DSP.createAnalyser('#analyser');
                     } else {
                         console.error('No devices detected!');
                     }
@@ -125,13 +123,6 @@ angular
 
         // watchers
         $scope.$watch('activeDevice', DSP.plug);
-        $scope.$watch('synth.oscType', DSP.setOscType);
-        $scope.$watch('synth.filterOn', DSP.enableFilter);
-        $scope.$watch('synth.filterType', DSP.setFilterType);
-        $scope.$watch('synth.filterFreq', DSP.setFilterFrequency);
-        $scope.$watch('synth.filterRes', DSP.setFilterResonance);
-        $scope.$watch('synth.attack', DSP.setAttack);
-        $scope.$watch('synth.release', DSP.setRelease);
         // support for computer keyboard
         $scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
     }]);
