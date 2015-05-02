@@ -5,10 +5,15 @@ angular
         var callback;
 
         self.device = null;
-        self.analyser = null;
         self.useKeyboard = false;
         self.triggered = []; // Currently active pads
-        self.score = []; // Recorded notes
+        
+        self.score = { // Recorded notes
+            //"Track Title": [], // Track title goes in quotes, not sure what goes in the array yet, if anything
+            "track1": [],
+            //"tempo": 100,
+            "timeSignature": [4,4]
+        }; 
         self.start = 1;
         self.noteReceivedTime = null;
         self.noteReleasedTime = null;
@@ -79,7 +84,7 @@ angular
                 });
                 
                 // Using Tone.js score values, start position, note, length in secs
-                self.score.push([self.start + ":0:0", note, self.noteDuration]);
+                self.score.track1.push([self.start + ":0:0", note, self.noteDuration]);
                 self.start++; 
             }
             
