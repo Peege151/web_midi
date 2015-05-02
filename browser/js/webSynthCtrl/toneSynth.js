@@ -61,7 +61,6 @@ angular
 			setActiveInstrument: _setActiveInstrument,
 			setMonoSynth: _setMonoSynth,
 			setPolySynth: _setPolySynth,
-			//synth: self.synth,
 			instruments: self.instruments
 		};
 	}]);

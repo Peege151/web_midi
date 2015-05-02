@@ -56,49 +56,52 @@ angular
             var note = midiToNote(e.data[1]);
             var velocity = midiToVelocity(e.data[2]);
 
-            // Upon pad touch, add data to triggered (active) pad array and score (recording) array
-            if(e.data[0] === 144) {
-                self.noteReceivedTime = e.timeStamp;
-                self.triggered.push(e.data);
-            }
+            // Only do these these things if there is a currently active synth
+            if(!!SynthEngine.getActiveSynth()) {
+                // Upon pad touch, add data to triggered (active) pad array and score (recording) array
+                if(e.data[0] === 144) {
+                    self.noteReceivedTime = e.timeStamp;
+                    self.triggered.push(e.data);
+                }
 
-            // Upon pad release, add data to triggered (active) pad array
-            if(e.data[0] === 128) {
-                self.noteReleasedTime = e.timeStamp;
-                self.noteDuration = (self.noteReleasedTime - self. noteReceivedTime) / 1000;
+                // Upon pad release, add data to triggered (active) pad array
+                if(e.data[0] === 128) {
+                    self.noteReleasedTime = e.timeStamp;
+                    self.noteDuration = (self.noteReleasedTime - self. noteReceivedTime) / 1000;
 
-                var noteToRemove = e.data[1];
-                self.triggered.forEach(function(element, index) {
-                    if (e.data[1] === element[1]) {
-                        self.triggered.splice(index, 1);
-                    }          
-                });
+                    var noteToRemove = e.data[1];
+                    self.triggered.forEach(function(element, index) {
+                        if (e.data[1] === element[1]) {
+                            self.triggered.splice(index, 1);
+                        }          
+                    });
+                    
+                    // Using Tone.js score values, start position, note, length in secs
+                    self.score.synth.push([self.start + ":0:0", note, self.noteDuration]);
+                    self.start++; 
+                }
                 
-                // Using Tone.js score values, start position, note, length in secs
-                self.score.synth.push([self.start + ":0:0", note, self.noteDuration]);
-                self.start++; 
-            }
-            
 
 
-            callback(self.triggered);
-            
-            /**
-            * e.data is an array
-            * e.data[0] = on (144) / off (128) / detune (224)
-            * e.data[1] = midi note
-            * e.data[2] = velocity || detune
-            */
-            switch(e.data[0]) {
-                case 144:
-                    SynthEngine.noteOn(note, null, velocity);
-                break;
-                case 128:
-                    SynthEngine.noteOff(note);
-                break;
-                // case 224:
-                //     SynthEngine.detune(e.data[2]);
-                // break;
+                callback(self.triggered);
+                
+                /**
+                * e.data is an array
+                * e.data[0] = on (144) / off (128) / detune (224)
+                * e.data[1] = midi note
+                * e.data[2] = velocity || detune
+                */
+                switch(e.data[0]) {
+                    case 144:
+                        SynthEngine.noteOn(note, null, velocity);
+                    break;
+                    case 128:
+                        SynthEngine.noteOff(note);
+                    break;
+                    // case 224:
+                    //     SynthEngine.detune(e.data[2]);
+                    // break;
+                }
             }
         }
 
@@ -150,16 +153,18 @@ angular
 
         // Playback
         function _play() {
-            console.log("DSP > Play");
+            // Create events for all of the notes
             Tone.Note.parseScore(self.score);
 
-            console.log(SynthEngine.synth);
+            // Get the current active synth
             self.synth = SynthEngine.getActiveSynth();
 
+            // Route the note channel
             Tone.Note.route("synth", function(time, note, duration) {
                 self.synth.triggerAttackRelease(note, duration, time);
             });
 
+            // Start the transport
             Tone.Transport.start();
         }
 
