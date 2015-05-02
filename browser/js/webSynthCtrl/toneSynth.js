@@ -5,7 +5,10 @@ angular
 		self.isPolyphonic = false;
 		self.instruments = ["Mono", "Poly"];
 		self.oscs = ["sawtooth", "square", "sine", "triangle"];
+		self.synth = null;
 
+
+		// Synth setting
 		function _setActiveInstrument(activeInstrument) {
 
 			switch(activeInstrument) {
@@ -38,27 +41,25 @@ angular
 				    }
 				});
 			}
-
 		}
-		function _setMonoSynth(type) {
+
+		function _setMonoSynth() {
 			self.isPolyphonic = false;
-			self.synthType = "Mono"
+			self.synthType = "Mono";
 			self.synth = new Tone.MonoSynth().toMaster();
 
 		}
 
 		function _setPolySynth() {
-			self.synthType = "Poly"
+			self.synthType = "Poly";
 			self.isPolyphonic = true;
 			self.synth = new Tone.PolySynth(6, Tone.MonoSynth).toMaster();
-
-			//the feedback delay
-
-			//play a snare sound through it
-			//self.synth.setPreset("BrassCircuit");
 		}
 
+
+		// Notes
 		function _noteOn(note, time, velocity) {
+
 			self.synth.triggerAttack(note, time, velocity);
 		}
 
@@ -69,11 +70,17 @@ angular
 			else self.synth.triggerRelease();
 		}
 
-		_setPolySynth();
+
+		// Getters
+		function _getActiveSynth() {
+			return self.synth;
+		}
+
 
 		return {
-			synth: self.synth,
+			//synth: self.synth,
 			oscs: self.oscs,
+			getActiveSynth: _getActiveSynth,
 			noteOn: _noteOn,
 			noteOff: _noteOff,
 			setDelay: _setDelay,
