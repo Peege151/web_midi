@@ -4,7 +4,10 @@ angular
 		var self = this;
 		self.isPolyphonic = false;
 		self.instruments = ["Mono", "Poly"];
+		self.synth = null;
 
+
+		// Synth setting
 		function _setActiveInstrument(activeInstrument) {
 			switch(activeInstrument) {
 	            case "Mono":
@@ -19,6 +22,7 @@ angular
 		}
 
 		function _setMonoSynth() {
+
 			self.isPolyphonic = false;
 			self.synth = new Tone.MonoSynth().toMaster();
 		}
@@ -29,6 +33,8 @@ angular
 			//self.synth.setPreset("BrassCircuit");
 		}
 
+
+		// Notes
 		function _noteOn(note, time, velocity) {
 
 			self.synth.triggerAttack(note, time, velocity);
@@ -41,12 +47,21 @@ angular
 			else self.synth.triggerRelease();
 		}
 
+
+		// Getters
+		function _getActiveSynth() {
+			return self.synth;
+		}
+
+
 		return {
+			getActiveSynth: _getActiveSynth,
 			noteOn: _noteOn,
 			noteOff: _noteOff,
 			setActiveInstrument: _setActiveInstrument,
 			setMonoSynth: _setMonoSynth,
 			setPolySynth: _setPolySynth,
+			//synth: self.synth,
 			instruments: self.instruments
 		};
 	}]);

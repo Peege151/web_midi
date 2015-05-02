@@ -10,14 +10,16 @@ angular
         
         self.score = { // Recorded notes
             //"Track Title": [], // Track title goes in quotes, not sure what goes in the array yet, if anything
-            "track1": [],
+            "synth": [],
             //"tempo": 100,
             "timeSignature": [4,4]
         }; 
-        self.start = 1;
+        self.start = 0;
         self.noteReceivedTime = null;
         self.noteReleasedTime = null;
         self.noteDuration = null;
+
+        self.synth = SynthEngine.synth;
 
 
         // Device connection
@@ -37,7 +39,6 @@ angular
 
                 self.device = device;
                 self.device.onmidimessage = _onmidimessage;
-                console.log(device);
             }
         }
 
@@ -59,14 +60,12 @@ angular
             if(e.data[0] === 144) {
                 self.noteReceivedTime = e.timeStamp;
                 self.triggered.push(e.data);
-                console.log(self.noteReceivedTime);
             }
 
             // Upon pad release, add data to triggered (active) pad array
             if(e.data[0] === 128) {
                 self.noteReleasedTime = e.timeStamp;
                 self.noteDuration = (self.noteReleasedTime - self. noteReceivedTime) / 1000;
-                console.log(self.noteDuration);
 
                 var noteToRemove = e.data[1];
                 self.triggered.forEach(function(element, index) {
@@ -76,7 +75,7 @@ angular
                 });
                 
                 // Using Tone.js score values, start position, note, length in secs
-                self.score.track1.push([self.start + ":0:0", note, self.noteDuration]);
+                self.score.synth.push([self.start + ":0:0", note, self.noteDuration]);
                 self.start++; 
             }
             
@@ -151,7 +150,17 @@ angular
 
         // Playback
         function _play() {
-            console.log("hi");
+            console.log("DSP > Play");
+            Tone.Note.parseScore(self.score);
+
+            console.log(SynthEngine.synth);
+            self.synth = SynthEngine.getActiveSynth();
+
+            Tone.Note.route("synth", function(time, note, duration) {
+                self.synth.triggerAttackRelease(note, duration, time);
+            });
+
+            Tone.Transport.start();
         }
 
 
