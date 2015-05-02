@@ -87,12 +87,10 @@ angular
         };
 
         $scope.score = DSP.returnScore(function(score) {
-            //$scope.score.push(score);
-            console.log("score", score);
-            console.log("$scope.score",$scope.score);
             $scope.$digest();
         });
 
+        // Connect devices
         devices
             .connect()
             .then(function(access) {

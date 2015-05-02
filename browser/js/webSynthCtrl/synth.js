@@ -7,8 +7,9 @@ angular
         self.device = null;
         self.analyser = null;
         self.useKeyboard = false;
-        self.triggered = [];
-        self.score = [];
+        self.triggered = []; // Currently active pads
+        self.score = []; // Recorded notes
+        self.start = 1;
 
         function _unplug() {
             if(self.device && self.device.onmidimessage) {
@@ -50,31 +51,33 @@ angular
         }
 
         function _onmidimessage(e) {
+            console.log(e);
+            // Convert MIDI values to Tone.js values
             var note = midiToNote(e.data[1]);
             var velocity = midiToVelocity(e.data[2]);
 
+            // Upon pad touch, add data to triggered (active) pad array and score (recording) array
             if(e.data[0] === 144) {
                 self.triggered.push(e.data);
-                console.log("triggered:", self.triggered);
-                self.score.push(e.data);
-                console.log("self.score:", self.score);
             }
 
+            // Upon pad release, add data to triggered (active) pad array
             if(e.data[0] === 128) {
                 var noteToRemove = e.data[1];
                 self.triggered.forEach(function(element, index) {
-                    //console.log("This is index: ", index);
                     if (e.data[1] === element[1]) {
                         self.triggered.splice(index, 1);
                     }          
                 });
             }
+            
+            // Using Tone.js score values, start position, note, length in secs
+            self.score.push([self.start + ":0:0", note, null]);
+            self.start++; 
 
 
             callback(self.triggered);
-            //console.log(self.triggered[0][1]);
             
-            //console.log("On/off/detune indicator ", e.data[0], ". Note: ", e.data[1], ". Velocity: ", e.data[2]);
             /**
             * e.data is an array
             * e.data[0] = on (144) / off (128) / detune (224)
@@ -94,6 +97,7 @@ angular
             }
         }
 
+        // Convert MIDI values to Tone.js values
         function midiToNote(midiNoteNum){
             var noteIndexToNote = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
             var octave = Math.floor(midiNoteNum / 12) - 2;
