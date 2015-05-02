@@ -26,11 +26,11 @@ angular
 		function _setPolySynth() {
 			self.isPolyphonic = true;
 			self.synth = new Tone.PolySynth(6, Tone.MonoSynth).toMaster();
-			self.synth.setPreset("BrassCircuit");
+			//self.synth.setPreset("BrassCircuit");
 		}
 
 		function _noteOn(note, time, velocity) {
-			self.synth.triggerAttack(note, 1, velocity);
+			self.synth.triggerAttack(note, time, velocity);
 		}
 
 		function _noteOff(note) {
