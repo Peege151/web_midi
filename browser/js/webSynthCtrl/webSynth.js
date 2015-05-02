@@ -3,31 +3,24 @@ angular
     .controller('WebSynthCtrl', ['$scope', 'Devices', 'DSP', 'SynthEngine', function($scope, devices, DSP, synthEngine) {
         $scope.devices = [];
         $scope.instruments = synthEngine.instruments;
+        $scope.oscs = synthEngine.oscs;
+        $scope.currBPM = 60;
         $scope.score = [];
         $scope.DSP = DSP;
-        
-        
-        // $scope.destroyUIMidi = function(pad){
-        //     var midiData =  new Uint8Array([128, pad, 127])
-        //     console.log("HI from mouse-up")
-        //     DSP.onmidimessage({data: midiData})        }
-        // $scope.createUIMidi = function(pad){
-        //    var midiData =  new Uint8Array([144, pad, 127])
-        //    //console.log(typeof midiData)
-        //    console.log("HI from mouse-down")
 
-        //    DSP.onmidimessage({data: midiData})
-        // }
+        $scope.setDelay = synthEngine.setDelay;
+        //$scope.synth = synthEngine.synth;
 
 
         // Transport and metronome
         $scope.transport = Tone.Transport;
-
         $scope.startTransport = function() { 
+
             $scope.transport.start();
         };
 
         $scope.stopTransport = function() {
+
             $scope.transport.stop();
         };
 
@@ -63,8 +56,13 @@ angular
             $scope.loadMetronome();
         };
 
+        $scope.play = DSP.play;
+        $scope.recordStart = DSP.recordStart;
+        $scope.recordStop = DSP.recordStop;
+        $scope.getRecordingStatus = DSP.getRecordingStatus;
 
-        // Triggered and score
+
+        // Triggered and score arrays
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
             $scope.triggeredArr = triggered;
             $scope.activated(triggered[triggered.length-1]);
@@ -72,6 +70,7 @@ angular
         });
 
         $scope.activated = function (id) {
+
             return $scope.triggeredArr.indexOf(id) !== -1;
         };
 
@@ -79,7 +78,7 @@ angular
             if ($scope.triggeredArr.length) {
                 for(var i = 0; i < $scope.triggeredArr.length; i++){
                     for(var j=0; j< $scope.triggeredArr[i].length; j++){
-                        if($scope.triggeredArr[i][j] == pad) return true
+                        if($scope.triggeredArr[i][j] == pad) return true;
                     }
                 }
             }
@@ -87,12 +86,11 @@ angular
         };
 
         $scope.score = DSP.returnScore(function(score) {
-            //$scope.score.push(score);
-            console.log("score", score);
-            console.log("$scope.score",$scope.score);
+
             $scope.$digest();
         });
 
+        // Connect devices
         devices
             .connect()
             .then(function(access) {
@@ -122,9 +120,25 @@ angular
                 console.error(e);
             });
 
-        // watchers
+        // Watchers
         $scope.$watch('activeDevice', DSP.plug);
         $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
-        // support for computer keyboard
-        $scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
+        $scope.$watch('activeOscillator', synthEngine.setActiveOscillator);
+
+        // Support for computer keyboard
+        //$scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
     }]);
+
+
+
+        // $scope.destroyUIMidi = function(pad){
+        //     var midiData =  new Uint8Array([128, pad, 127])
+        //     console.log("HI from mouse-up")
+        //     DSP.onmidimessage({data: midiData})        }
+        // $scope.createUIMidi = function(pad){
+        //    var midiData =  new Uint8Array([144, pad, 127])
+        //    //console.log(typeof midiData)
+        //    console.log("HI from mouse-down")
+
+        //    DSP.onmidimessage({data: midiData})
+        // }

@@ -2,7 +2,11 @@
 	<div class="synth container" ng-controller="WebSynthCtrl">
 
 		<!-- {{ triggeredArr }} -->
+	    <button class="btn" ng-click="play()">Play</button>
+	    <button class="btn" ng-if="!getRecordingStatus()" ng-click="recordStart()"><i class="fa fa-circle"></i> Record</button>
+	    <button class="btn btn-danger" ng-if="getRecordingStatus()" ng-click="recordStop()"><i class="fa fa-square"></i> Record</button>
 	    {{ score }}
+
 	    <h1>Web MIDI API Drumpads</h1>
 	    <div class="form-inline">
 		    <div class="form-group">
@@ -16,6 +20,13 @@
 			    	<option ng-repeat="instrument in instruments">{{ instrument }}</option>
 		    	</select>
 		    </div>
+	        <div class="form-group">
+	        	<select ng-model="activeOscillator" class="form-control">
+	    	    	<option value="" disabled>Choose an oscillator...</option>
+	    	    	<option ng-repeat="osc in oscs">{{ osc }}</option>
+	        	</select>
+	        </div>
+	        <button ng-click="setDelay()"> Add Delay </button>
 		</div>
 		<hr>
 	    <!-- Transport and metronome -->
@@ -25,6 +36,8 @@
 	    	<button ng-click="loadMetronome()" class="btn">Start metronome</button>
 	    	<button ng-click="pauseMetronome()" class="btn">Stop metronome</button>
 		</div>
+		<!-- BPM Directive-->
+		<bpm-slider></bpm-slider>
 
 		<!-- Drumpads -->
 	    <div class="col-lg-12 col-md-12 col-sm-12">

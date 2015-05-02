@@ -5,11 +5,23 @@ angular
         var callback;
 
         self.device = null;
-        self.analyser = null;
         self.useKeyboard = false;
-        self.triggered = [];
-        self.score = [];
+        self.triggered = []; // Currently active pads
+        
+        self.score = { // Recorded notes
+            //"Track Title": [], // Track title goes in quotes, not sure what goes in the array yet, if anything
+            "synth": [],
+            //"tempo": 100,
+            "timeSignature": [4,4]
+        }; 
+        self.start = 0;
+        self.noteReceivedTime = null;
+        self.noteReleasedTime = null;
+        self.noteDuration = null;
 
+        self.recording = false;
+
+        // Device connection
         function _unplug() {
             if(self.device && self.device.onmidimessage) {
                 self.device.onmidimessage = null;
@@ -26,74 +38,96 @@ angular
 
                 self.device = device;
                 self.device.onmidimessage = _onmidimessage;
-                console.log(device);
             }
         }
 
-        function _switchKeyboard(on) {
-            if(on !== undefined) {
-                _unplug();
-                Keyboard.disable();
 
-                if(on) {
-                    Keyboard.enable();
-
-                    self.device = $window;
-                    self.device.onmessage = _onmessage;
-                } else {
-                    /**
-                    * TODO: look at plugging back the device
-                    * if there was one selected before enabling the computer keyboard
-                    */
-                }
+        // Message handling
+        function _onmessage(e) {
+            if(e && e.data) {
+                //console.log(e);
+                _onmidimessage(e.data);
             }
         }
 
         function _onmidimessage(e) {
+            // Convert MIDI values to Tone.js values
             var note = midiToNote(e.data[1]);
             var velocity = midiToVelocity(e.data[2]);
 
-            if(e.data[0] === 144) {
-                self.triggered.push(e.data);
-                console.log("triggered:", self.triggered);
-                self.score.push(e.data);
-                console.log("self.score:", self.score);
-            }
+            // Only do these these things if there is a currently active synth
+            if(!!SynthEngine.getActiveSynth()) {
+                // Upon pad touch, add data to triggered (active) pad array and score (recording) array
+                if(e.data[0] === 144) {
+                    self.noteReceivedTime = e.timeStamp;
+                    self.triggered.push(e.data);
+                }
 
-            if(e.data[0] === 128) {
-                var noteToRemove = e.data[1];
-                self.triggered.forEach(function(element, index) {
-                    //console.log("This is index: ", index);
-                    if (e.data[1] === element[1]) {
-                        self.triggered.splice(index, 1);
-                    }          
-                });
-            }
+                // Upon pad release, remove data from triggered (active) pad array
+                if(e.data[0] === 128) {
+                    self.noteReleasedTime = e.timeStamp;
+                    self.noteDuration = (self.noteReleasedTime - self. noteReceivedTime) / 1000;
+
+                    var noteToRemove = e.data[1];
+                    self.triggered.forEach(function(element, index) {
+                        if (e.data[1] === element[1]) {
+                            self.triggered.splice(index, 1);
+                        }          
+                    });
+                    
+                    // Add to the score if recording
+                    if(self.recording) {
+                        // Using Tone.js score values, start position, note, length in secs
+                        self.score.synth.push([self.start + ":0:0", note, self.noteDuration]);
+                        self.start++; 
+                    }
+                }
+                
 
 
-            callback(self.triggered);
-            //console.log(self.triggered[0][1]);
-            
-            //console.log("On/off/detune indicator ", e.data[0], ". Note: ", e.data[1], ". Velocity: ", e.data[2]);
-            /**
-            * e.data is an array
-            * e.data[0] = on (144) / off (128) / detune (224)
-            * e.data[1] = midi note
-            * e.data[2] = velocity || detune
-            */
-            switch(e.data[0]) {
-                case 144:
-                    SynthEngine.noteOn(note, null, velocity);
-                break;
-                case 128:
-                    SynthEngine.noteOff(note);
-                break;
-                // case 224:
-                //     SynthEngine.detune(e.data[2]);
-                // break;
+                callback(self.triggered);
+                
+                /**
+                * e.data is an array
+                * e.data[0] = on (144) / off (128) / detune (224)
+                * e.data[1] = midi note
+                * e.data[2] = velocity || detune
+                */
+                switch(e.data[0]) {
+                    case 144:
+                        SynthEngine.noteOn(note, null, velocity);
+                    break;
+                    case 128:
+                        SynthEngine.noteOff(note);
+                    break;
+                    // case 224:
+                    //     SynthEngine.detune(e.data[2]);
+                    // break;
+                }
             }
         }
 
+        // function _switchKeyboard(on) {
+        //     if(on !== undefined) {
+        //         _unplug();
+        //         Keyboard.disable();
+
+        //         if(on) {
+        //             Keyboard.enable();
+
+        //             self.device = $window;
+        //             self.device.onmessage = _onmessage;
+        //         } else {
+        //             /**
+        //             * TODO: look at plugging back the device
+        //             * if there was one selected before enabling the computer keyboard
+        //             */
+        //         }
+        //     }
+        // }
+
+
+        // Convert MIDI values to Tone.js values
         function midiToNote(midiNoteNum){
             var noteIndexToNote = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
             var octave = Math.floor(midiNoteNum / 12) - 2;
@@ -102,11 +136,13 @@ angular
         }
 
         function midiToVelocity(midiVelocity) {
+
             return midiVelocity / 127;
         }
 
+
+        // Getters
         function _returnTriggered (cb){
-            //console.log("get it?");
             callback = cb;
             return self.triggered;
         }
@@ -116,18 +152,48 @@ angular
             return self.score;
         }
 
-        function _onmessage(e) {
-            if(e && e.data) {
-                //console.log(e);
-                _onmidimessage(e.data);
-            }
+
+        // Transport
+        function _play() {
+            // Create events for all of the notes
+            Tone.Note.parseScore(self.score);
+
+            // Get the current active synth
+            self.synth = SynthEngine.getActiveSynth();
+
+            // Route the note channel
+            Tone.Note.route("synth", function(time, note, duration) {
+                self.synth.triggerAttackRelease(note, duration, time);
+            });
+
+            // Start the transport
+            Tone.Transport.start();
+        }
+
+        function _recordStart() {
+
+            self.recording = true;
+        }
+
+        function _recordStop() {
+
+            self.recording = false;
+        }
+
+        function _getRecordingStatus() {
+
+            return self.recording;
         }
 
         return {
+            getRecordingStatus: _getRecordingStatus,
             onmidimessage: _onmidimessage,
-            returnTriggered: _returnTriggered,
-            returnScore: _returnScore,
+            play: _play,
             plug: _plug,
-            switchKeyboard: _switchKeyboard
+            recordStart: _recordStart,
+            recordStop: _recordStop,
+            returnTriggered: _returnTriggered,
+            returnScore: _returnScore
+            //switchKeyboard: _switchKeyboard
         };
     }]);
