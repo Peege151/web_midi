@@ -19,6 +19,8 @@ angular
         self.noteReleasedTime = null;
         self.noteDuration = null;
 
+
+        // Device connection
         function _unplug() {
             if(self.device && self.device.onmidimessage) {
                 self.device.onmidimessage = null;
@@ -39,22 +41,12 @@ angular
             }
         }
 
-        function _switchKeyboard(on) {
-            if(on !== undefined) {
-                _unplug();
-                Keyboard.disable();
 
-                if(on) {
-                    Keyboard.enable();
-
-                    self.device = $window;
-                    self.device.onmessage = _onmessage;
-                } else {
-                    /**
-                    * TODO: look at plugging back the device
-                    * if there was one selected before enabling the computer keyboard
-                    */
-                }
+        // Message handling
+        function _onmessage(e) {
+            if(e && e.data) {
+                //console.log(e);
+                _onmidimessage(e.data);
             }
         }
 
@@ -111,6 +103,26 @@ angular
             }
         }
 
+        // function _switchKeyboard(on) {
+        //     if(on !== undefined) {
+        //         _unplug();
+        //         Keyboard.disable();
+
+        //         if(on) {
+        //             Keyboard.enable();
+
+        //             self.device = $window;
+        //             self.device.onmessage = _onmessage;
+        //         } else {
+        //             /**
+        //             * TODO: look at plugging back the device
+        //             * if there was one selected before enabling the computer keyboard
+        //             */
+        //         }
+        //     }
+        // }
+
+
         // Convert MIDI values to Tone.js values
         function midiToNote(midiNoteNum){
             var noteIndexToNote = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -120,11 +132,13 @@ angular
         }
 
         function midiToVelocity(midiVelocity) {
+
             return midiVelocity / 127;
         }
 
+
+        // Getters
         function _returnTriggered (cb){
-            //console.log("get it?");
             callback = cb;
             return self.triggered;
         }
@@ -134,18 +148,19 @@ angular
             return self.score;
         }
 
-        function _onmessage(e) {
-            if(e && e.data) {
-                //console.log(e);
-                _onmidimessage(e.data);
-            }
+
+        // Playback
+        function _play() {
+            console.log("hi");
         }
+
 
         return {
             onmidimessage: _onmidimessage,
             returnTriggered: _returnTriggered,
             returnScore: _returnScore,
-            plug: _plug,
-            switchKeyboard: _switchKeyboard
+            play: _play,
+            plug: _plug
+            //switchKeyboard: _switchKeyboard
         };
     }]);

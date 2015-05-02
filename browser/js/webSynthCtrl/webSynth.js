@@ -5,29 +5,18 @@ angular
         $scope.instruments = synthEngine.instruments;
         $scope.score = [];
         $scope.DSP = DSP;
-        
-        
-        // $scope.destroyUIMidi = function(pad){
-        //     var midiData =  new Uint8Array([128, pad, 127])
-        //     console.log("HI from mouse-up")
-        //     DSP.onmidimessage({data: midiData})        }
-        // $scope.createUIMidi = function(pad){
-        //    var midiData =  new Uint8Array([144, pad, 127])
-        //    //console.log(typeof midiData)
-        //    console.log("HI from mouse-down")
-
-        //    DSP.onmidimessage({data: midiData})
-        // }
 
 
         // Transport and metronome
         $scope.transport = Tone.Transport;
 
         $scope.startTransport = function() { 
+
             $scope.transport.start();
         };
 
         $scope.stopTransport = function() {
+
             $scope.transport.stop();
         };
 
@@ -63,6 +52,8 @@ angular
             $scope.loadMetronome();
         };
 
+        $scope.play = DSP.play;
+
 
         // Triggered and score
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
@@ -72,6 +63,7 @@ angular
         });
 
         $scope.activated = function (id) {
+
             return $scope.triggeredArr.indexOf(id) !== -1;
         };
 
@@ -87,6 +79,7 @@ angular
         };
 
         $scope.score = DSP.returnScore(function(score) {
+
             $scope.$digest();
         });
 
@@ -120,9 +113,23 @@ angular
                 console.error(e);
             });
 
-        // watchers
+        // Watchers
         $scope.$watch('activeDevice', DSP.plug);
         $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
-        // support for computer keyboard
-        $scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
+        // Support for computer keyboard
+        //$scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
     }]);
+
+
+
+        // $scope.destroyUIMidi = function(pad){
+        //     var midiData =  new Uint8Array([128, pad, 127])
+        //     console.log("HI from mouse-up")
+        //     DSP.onmidimessage({data: midiData})        }
+        // $scope.createUIMidi = function(pad){
+        //    var midiData =  new Uint8Array([144, pad, 127])
+        //    //console.log(typeof midiData)
+        //    console.log("HI from mouse-down")
+
+        //    DSP.onmidimessage({data: midiData})
+        // }

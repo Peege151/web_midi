@@ -30,6 +30,7 @@ angular
 		}
 
 		function _noteOn(note, time, velocity) {
+
 			self.synth.triggerAttack(note, time, velocity);
 		}
 
@@ -39,8 +40,6 @@ angular
 			}
 			else self.synth.triggerRelease();
 		}
-
-		_setPolySynth();
 
 		return {
 			noteOn: _noteOn,
