@@ -1,7 +1,8 @@
 angular
-    .module('WebSynth', ['WebMIDI', 'Synth'])
-    .controller('WebSynthCtrl', ['$scope', 'Devices', 'DSP', function($scope, devices, DSP) {
+    .module('WebSynth', ['WebMIDI', 'Synth', 'Tone-Synth'])
+    .controller('WebSynthCtrl', ['$scope', 'Devices', 'DSP', 'SynthEngine', function($scope, devices, DSP, synthEngine) {
         $scope.devices = [];
+        $scope.instruments = synthEngine.instruments;
         $scope.score = [];
         $scope.DSP = DSP;
         
@@ -123,6 +124,7 @@ angular
 
         // watchers
         $scope.$watch('activeDevice', DSP.plug);
+        $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
         // support for computer keyboard
         $scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
     }]);

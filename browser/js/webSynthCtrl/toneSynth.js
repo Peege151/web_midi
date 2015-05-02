@@ -3,10 +3,24 @@ angular
 	.factory('SynthEngine', [function(){
 		var self = this;
 		self.isPolyphonic = false;
+		self.instruments = ["Mono", "Poly"];
+
+		function _setActiveInstrument(activeInstrument) {
+			switch(activeInstrument) {
+	            case "Mono":
+	                _setMonoSynth();
+	            break;
+	            case "Poly":
+	                _setPolySynth();
+	            break;
+	            default:
+	            	self.synth = null;  
+			}
+		}
 
 		function _setMonoSynth() {
 			self.isPolyphonic = false;
-			self.synth = new Tone.FMSynth().toMaster();
+			self.synth = new Tone.MonoSynth().toMaster();
 		}
 
 		function _setPolySynth() {
@@ -31,7 +45,9 @@ angular
 		return {
 			noteOn: _noteOn,
 			noteOff: _noteOff,
+			setActiveInstrument: _setActiveInstrument,
 			setMonoSynth: _setMonoSynth,
-			setPolySynth: _setPolySynth
+			setPolySynth: _setPolySynth,
+			instruments: self.instruments
 		};
 	}]);
