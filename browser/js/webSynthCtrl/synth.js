@@ -10,6 +10,9 @@ angular
         self.triggered = []; // Currently active pads
         self.score = []; // Recorded notes
         self.start = 1;
+        self.noteReceivedTime = null;
+        self.noteReleasedTime = null;
+        self.noteDuration = null;
 
         function _unplug() {
             if(self.device && self.device.onmidimessage) {
@@ -51,29 +54,35 @@ angular
         }
 
         function _onmidimessage(e) {
-            console.log(e);
             // Convert MIDI values to Tone.js values
             var note = midiToNote(e.data[1]);
             var velocity = midiToVelocity(e.data[2]);
 
             // Upon pad touch, add data to triggered (active) pad array and score (recording) array
             if(e.data[0] === 144) {
+                self.noteReceivedTime = e.timeStamp;
                 self.triggered.push(e.data);
+                console.log(self.noteReceivedTime);
             }
 
             // Upon pad release, add data to triggered (active) pad array
             if(e.data[0] === 128) {
+                self.noteReleasedTime = e.timeStamp;
+                self.noteDuration = (self.noteReleasedTime - self. noteReceivedTime) / 1000;
+                console.log(self.noteDuration);
+
                 var noteToRemove = e.data[1];
                 self.triggered.forEach(function(element, index) {
                     if (e.data[1] === element[1]) {
                         self.triggered.splice(index, 1);
                     }          
                 });
+                
+                // Using Tone.js score values, start position, note, length in secs
+                self.score.push([self.start + ":0:0", note, self.noteDuration]);
+                self.start++; 
             }
             
-            // Using Tone.js score values, start position, note, length in secs
-            self.score.push([self.start + ":0:0", note, null]);
-            self.start++; 
 
 
             callback(self.triggered);
