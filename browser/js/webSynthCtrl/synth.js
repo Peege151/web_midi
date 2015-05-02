@@ -19,8 +19,7 @@ angular
         self.noteReleasedTime = null;
         self.noteDuration = null;
 
-        self.synth = SynthEngine.synth;
-
+        self.recording = false;
 
         // Device connection
         function _unplug() {
@@ -64,7 +63,7 @@ angular
                     self.triggered.push(e.data);
                 }
 
-                // Upon pad release, add data to triggered (active) pad array
+                // Upon pad release, remove data from triggered (active) pad array
                 if(e.data[0] === 128) {
                     self.noteReleasedTime = e.timeStamp;
                     self.noteDuration = (self.noteReleasedTime - self. noteReceivedTime) / 1000;
@@ -76,9 +75,12 @@ angular
                         }          
                     });
                     
-                    // Using Tone.js score values, start position, note, length in secs
-                    self.score.synth.push([self.start + ":0:0", note, self.noteDuration]);
-                    self.start++; 
+                    // Add to the score if recording
+                    if(self.recording) {
+                        // Using Tone.js score values, start position, note, length in secs
+                        self.score.synth.push([self.start + ":0:0", note, self.noteDuration]);
+                        self.start++; 
+                    }
                 }
                 
 
@@ -151,7 +153,7 @@ angular
         }
 
 
-        // Playback
+        // Transport
         function _play() {
             // Create events for all of the notes
             Tone.Note.parseScore(self.score);
@@ -168,13 +170,25 @@ angular
             Tone.Transport.start();
         }
 
+        function _recordStart() {
+
+            self.recording = true;
+        }
+
+        function _recordStop() {
+
+            self.recording = false;
+        }
+
 
         return {
             onmidimessage: _onmidimessage,
             returnTriggered: _returnTriggered,
             returnScore: _returnScore,
             play: _play,
-            plug: _plug
+            plug: _plug,
+            recordStart: _recordStart,
+            recordStop: _recordStop
             //switchKeyboard: _switchKeyboard
         };
     }]);

@@ -53,6 +53,8 @@ angular
         };
 
         $scope.play = DSP.play;
+        $scope.recordStart = DSP.recordStart;
+        $scope.recordStop = DSP.recordStop;
 
 
         // Triggered and score
