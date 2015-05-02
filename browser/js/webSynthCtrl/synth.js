@@ -1,12 +1,15 @@
 angular
-    .module('Synth', ['WebAudio', 'WebAnalyser', 'Keyboard'])
-    .factory('DSP', ['AudioEngine', 'Analyser', '$window','KeyboardHandler', function(Engine, Analyser, $window, Keyboard) {
+    .module('Synth', ['Tone-Synth', 'WebAnalyser', 'Keyboard'])
+    .factory('DSP', ['SynthEngine', 'Analyser', '$window','KeyboardHandler', function(SynthEngine, Analyser, $window, Keyboard) {
         var self = this;
+        var callback;
+
         self.device = null;
         self.analyser = null;
         self.useKeyboard = false;
-        Engine.init();
         self.triggered = [];
+        self.score = [];
+
         function _unplug() {
             if(self.device && self.device.onmidimessage) {
                 self.device.onmidimessage = null;
@@ -23,10 +26,10 @@ angular
 
                 self.device = device;
                 self.device.onmidimessage = _onmidimessage;
-                console.log(device)
+                console.log(device);
             }
         }
-        var callback;
+
         function _switchKeyboard(on) {
             if(on !== undefined) {
                 _unplug();
@@ -46,16 +49,16 @@ angular
             }
         }
 
-        function _createAnalyser(canvas) {
-            self.analyser = new Analyser(canvas);
-            Engine.wire(self.analyser);
-
-            return self.analyser;
-        }
-
         function _onmidimessage(e) {
-            //console.log("Midi message");
-            if(e.data[0] === 144) self.triggered.push(e.data);
+            var note = midiToNote(e.data[1]);
+            var velocity = midiToVelocity(e.data[2]);
+
+            if(e.data[0] === 144) {
+                self.triggered.push(e.data);
+                console.log("triggered:", self.triggered);
+                self.score.push(e.data);
+                console.log("self.score:", self.score);
+            }
 
             if(e.data[0] === 128) {
                 var noteToRemove = e.data[1];
@@ -80,21 +83,39 @@ angular
             */
             switch(e.data[0]) {
                 case 144:
-                    Engine.noteOn(e.data[1], e.data[2]);
+                    SynthEngine.noteOn(note, null, velocity);
                 break;
                 case 128:
-                    Engine.noteOff(e.data[1]);
+                    SynthEngine.noteOff(note);
                 break;
-                case 224:
-                    Engine.detune(e.data[2]);
-                break;
+                // case 224:
+                //     SynthEngine.detune(e.data[2]);
+                // break;
             }
         }
+
+        function midiToNote(midiNoteNum){
+            var noteIndexToNote = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+            var octave = Math.floor(midiNoteNum / 12) - 2;
+            var note = midiNoteNum % 12;
+            return noteIndexToNote[note] + octave;
+        }
+
+        function midiToVelocity(midiVelocity) {
+            return midiVelocity / 127;
+        }
+
         function _returnTriggered (cb){
             //console.log("get it?");
             callback = cb;
             return self.triggered;
         }
+
+        function _returnScore (cb) {
+            callback = cb;
+            return self.score;
+        }
+
         function _onmessage(e) {
             if(e && e.data) {
                 //console.log(e);
@@ -102,29 +123,11 @@ angular
             }
         }
 
-        function _enableFilter(enable) {
-            if(enable !== undefined) {
-                if(enable) {
-                    Engine.filter.connect();
-                } else {
-                    Engine.filter.disconnect();
-                }
-            }
-        }
-
         return {
             onmidimessage: _onmidimessage,
-            triggered: self.triggered,
             returnTriggered: _returnTriggered,
-            createAnalyser: _createAnalyser,
-            enableFilter: _enableFilter,
+            returnScore: _returnScore,
             plug: _plug,
-            setOscType: Engine.osc.setType,
-            setFilterType: Engine.filter.setType,
-            setAttack: Engine.setAttack,
-            setRelease: Engine.setRelease,
-            setFilterFrequency: Engine.filter.setFrequency,
-            setFilterResonance: Engine.filter.setResonance,
             switchKeyboard: _switchKeyboard
         };
     }]);

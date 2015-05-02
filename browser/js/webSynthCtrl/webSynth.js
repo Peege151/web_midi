@@ -1,33 +1,71 @@
 angular
-    .module('WebSynth', ['WebMIDI', 'Synth'])
-    .controller('WebSynthCtrl', ['$scope', 'Devices', 'DSP', function($scope, devices, DSP) {
+    .module('WebSynth', ['WebMIDI', 'Synth', 'Tone-Synth'])
+    .controller('WebSynthCtrl', ['$scope', 'Devices', 'DSP', 'SynthEngine', function($scope, devices, DSP, synthEngine) {
         $scope.devices = [];
-        $scope.analyser = null;
-        $scope.oscTypes = ['sine', 'square', 'triangle', 'sawtooth'];
-        $scope.filterTypes = ['lowpass', 'highpass'];
+        $scope.instruments = synthEngine.instruments;
+        $scope.score = [];
         $scope.DSP = DSP;
-        $scope.synth = {
-            oscType: 'sine',
-            filterType: 'lowpass',
-            filterOn: false,
-            filterFreq: 50,
-            filterRes: 0,
-            attack: 0.05,
-            release: 0.05
-        };
-        $scope.destroyUIMidi = function(pad){
-            var midiData =  new Uint8Array([128, pad, 127])
-            console.log("HI from mouse-up")
-            DSP.onmidimessage({data: midiData})        }
-        $scope.createUIMidi = function(pad){
-           var midiData =  new Uint8Array([144, pad, 127])
-           //console.log(typeof midiData)
-           console.log("HI from mouse-down")
+        
+        
+        // $scope.destroyUIMidi = function(pad){
+        //     var midiData =  new Uint8Array([128, pad, 127])
+        //     console.log("HI from mouse-up")
+        //     DSP.onmidimessage({data: midiData})        }
+        // $scope.createUIMidi = function(pad){
+        //    var midiData =  new Uint8Array([144, pad, 127])
+        //    //console.log(typeof midiData)
+        //    console.log("HI from mouse-down")
 
-           DSP.onmidimessage({data: midiData})
-        }
+        //    DSP.onmidimessage({data: midiData})
+        // }
+
+
+        // Transport and metronome
+        $scope.transport = Tone.Transport;
+
+        $scope.startTransport = function() { 
+            $scope.transport.start();
+        };
+
+        $scope.stopTransport = function() {
+            $scope.transport.stop();
+        };
+
+        $scope.metronome = null;
+
+        $scope.loadMetronome = function() {
+
+            if($scope.metronome === null) {
+                $scope.metronome = new Tone.Player("../../sounds/woodblock.wav");
+
+                Tone.Buffer.onload = function() {
+                    $scope.metronome.toMaster();
+
+                    $scope.transport.setInterval(function(time){
+                        $scope.metronome.start(time);
+                    }, "4n");
+                };
+            }
+            else {
+                $scope.metronome.volume.value = 0;
+            }
+        };
+
+        $scope.pauseMetronome = function() {
+            //$scope.metronome.pause(1);
+            $scope.metronome.volume.value = -100;
+        };
+
+        $scope.setBpm = $scope.transport.bpm.value = 60;
+
+        $scope.startAll = function() {
+            $scope.startTransport();
+            $scope.loadMetronome();
+        };
+
+
+        // Triggered and score
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
-            //console.log(triggered);
             $scope.triggeredArr = triggered;
             $scope.activated(triggered[triggered.length-1]);
             $scope.$digest();
@@ -48,6 +86,13 @@ angular
             return false;
         };
 
+        $scope.score = DSP.returnScore(function(score) {
+            //$scope.score.push(score);
+            console.log("score", score);
+            console.log("$scope.score",$scope.score);
+            $scope.$digest();
+        });
+
         devices
             .connect()
             .then(function(access) {
@@ -66,7 +111,7 @@ angular
                         }
 
                         // create the frequency analyser
-                        $scope.analyser = DSP.createAnalyser('#analyser');
+                        //$scope.analyser = DSP.createAnalyser('#analyser');
                     } else {
                         console.error('No devices detected!');
                     }
@@ -79,13 +124,7 @@ angular
 
         // watchers
         $scope.$watch('activeDevice', DSP.plug);
-        $scope.$watch('synth.oscType', DSP.setOscType);
-        $scope.$watch('synth.filterOn', DSP.enableFilter);
-        $scope.$watch('synth.filterType', DSP.setFilterType);
-        $scope.$watch('synth.filterFreq', DSP.setFilterFrequency);
-        $scope.$watch('synth.filterRes', DSP.setFilterResonance);
-        $scope.$watch('synth.attack', DSP.setAttack);
-        $scope.$watch('synth.release', DSP.setRelease);
+        $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
         // support for computer keyboard
         $scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
     }]);
