@@ -1,0 +1,9 @@
+<input type="range" min="40" max="300" value="40"  onchange="showValue(this.value)" />
+<span id="range">{{currBPM}}</span>
+
+<script>
+	function showValue(newValue){
+		var bpm = document.getElementById("range").innerHTML=newValue;
+		Tone.Transport.bpm.value = bpm
+	}
+</script>
