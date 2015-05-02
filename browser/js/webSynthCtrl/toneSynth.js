@@ -25,8 +25,7 @@ angular
 			    "feedback" : 0.6,
 			    "wet" : 0.5
 			}).toMaster(); 
-			console.log("setting!")
-			console.log(self.synth)
+
 			self.synth.connect(dly);
 
 
