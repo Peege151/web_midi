@@ -3,6 +3,9 @@ angular
     .controller('WebSynthCtrl', ['$scope', 'Devices', 'DSP', 'SynthEngine', function($scope, devices, DSP, synthEngine) {
         $scope.devices = [];
         $scope.instruments = synthEngine.instruments;
+        $scope.oscs = synthEngine.oscs;
+        console.log($scope.oscs);
+
         $scope.score = [];
         $scope.DSP = DSP;
         
@@ -125,6 +128,8 @@ angular
         // watchers
         $scope.$watch('activeDevice', DSP.plug);
         $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
+        $scope.$watch('activeOscillator', synthEngine.setActiveOscillator);
+
         // support for computer keyboard
         $scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
     }]);
