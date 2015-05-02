@@ -19,6 +19,18 @@ angular
 	            	self.synth = null;  
 			}
 		}
+		function _setDelay() {
+			var dly = new Tone.PingPongDelay({
+			    "delayTime" : "8n",
+			    "feedback" : 0.6,
+			    "wet" : 0.5
+			}).toMaster(); 
+			console.log("setting!")
+			console.log(self.synth)
+			self.synth.connect(dly);
+
+
+		}
 		function _setActiveOscillator (activeOscillator){
 			if(self.synth){	
 				self.synth.set({
@@ -33,8 +45,6 @@ angular
 			self.isPolyphonic = false;
 			self.synthType = "Mono"
 			self.synth = new Tone.MonoSynth().toMaster();
-			console.log(self.synth)
-
 
 		}
 
@@ -42,7 +52,10 @@ angular
 			self.synthType = "Poly"
 			self.isPolyphonic = true;
 			self.synth = new Tone.PolySynth(6, Tone.MonoSynth).toMaster();
-			console.log(self.synth)
+
+			//the feedback delay
+
+			//play a snare sound through it
 			//self.synth.setPreset("BrassCircuit");
 		}
 
@@ -64,6 +77,7 @@ angular
 			oscs: self.oscs,
 			noteOn: _noteOn,
 			noteOff: _noteOff,
+			setDelay: _setDelay,
 			setActiveInstrument: _setActiveInstrument,
 			setActiveOscillator: _setActiveOscillator,
 			setMonoSynth: _setMonoSynth,

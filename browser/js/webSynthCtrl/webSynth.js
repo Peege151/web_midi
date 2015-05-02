@@ -4,12 +4,14 @@ angular
         $scope.devices = [];
         $scope.instruments = synthEngine.instruments;
         $scope.oscs = synthEngine.oscs;
-        console.log($scope.oscs);
-
+        $scope.currBPM = 60
         $scope.score = [];
         $scope.DSP = DSP;
-        
-        
+        $scope.setDelay = synthEngine.setDelay;
+
+        $scope.synth = synthEngine.synth
+
+
         // $scope.destroyUIMidi = function(pad){
         //     var midiData =  new Uint8Array([128, pad, 127])
         //     console.log("HI from mouse-up")
@@ -25,7 +27,6 @@ angular
 
         // Transport and metronome
         $scope.transport = Tone.Transport;
-
         $scope.startTransport = function() { 
             $scope.transport.start();
         };
