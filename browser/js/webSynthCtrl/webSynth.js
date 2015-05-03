@@ -18,9 +18,15 @@ angular
         $scope.position = "";
         $scope.transport.bpm.value = 60;
         $scope.play = DSP.play;
+
+
+        // Recording
         $scope.recordStart = DSP.recordStart;
         $scope.recordStop = DSP.recordStop;
         $scope.getRecordingStatus = DSP.getRecordingStatus;
+        $scope.clearRecording = DSP.clearRecording;
+
+
 
         $scope.startTransport = function() { 
 
@@ -41,6 +47,9 @@ angular
         $scope.stopTransport = function() {
 
             $scope.transport.stop();
+            $scope.rawCounter = 0;
+            $scope.position = $scope.timeIncrementer($scope.rawCounter);
+            $scope.$digest();
         };
 
         // Take the rawCounter integer and convert it to bar notation for Tone.js

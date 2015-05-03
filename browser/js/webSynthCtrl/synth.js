@@ -173,7 +173,13 @@ angular
             return self.recording;
         }
 
+        function _clearRecording() {
+            self.score.synth = [];
+        }
+
+
         return {
+            clearRecording: _clearRecording,
             getRecordingStatus: _getRecordingStatus,
             onmidimessage: _onmidimessage,
             play: _play,
