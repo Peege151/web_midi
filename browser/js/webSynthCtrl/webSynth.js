@@ -17,17 +17,41 @@ angular
         $scope.rawCounter = 0;
         $scope.position = "0:0:0";
         $scope.transport.bpm.value = 60;
-        $scope.play = DSP.play;
+        $scope.playing = false;
+        $scope.play = function() {
+            $scope.playing = true;
+            $scope.startTransport();
+            DSP.play();
+        };
+        $scope.stop = function() {
+            $scope.playing = false;
+            $scope.stopTransport();
+        };
 
 
         // Recording
         $scope.recordStart = DSP.recordStart;
         $scope.recordStop = DSP.recordStop;
         $scope.getRecordingStatus = DSP.getRecordingStatus;
-        $scope.clearRecording = DSP.clearRecording;
+        
+        $scope.clearRecording = function() {
+            DSP.clearRecording();
+            $scope.score = DSP.returnScore(function(score) {
+                $scope.$digest();
+            });
+        };
 
+        // effects 
 
+        $scope.effects = [];   
 
+        $scope.DLY_wetDry = 0;
+        $scope.DLY_feedback = 0;
+        $scope.DLY_delayTime = "8n"
+
+        $scope.sendDelay = function(){
+            synthEngine.setDelay($scope.DLY_delayTime, $scope.DLY_feedback, $scope.DLY_wetDry)
+        }
         $scope.startTransport = function() { 
 
             $scope.transport.start();
@@ -79,7 +103,10 @@ angular
             return bars + ":" + quarters + ":" + sixteenths;
         };
 
+        $scope.metronomePlaying = false;
+
         $scope.loadMetronome = function() {
+            $scope.metronomePlaying = true;
 
             if($scope.metronome === null) {
                 $scope.metronome = new Tone.Player("../../sounds/woodblock.wav");
@@ -100,12 +127,11 @@ angular
         };
 
         $scope.pauseMetronome = function() {
-            //$scope.metronome.pause(1);
+            $scope.metronomePlaying = false;
             $scope.metronome.volume.value = -100;
         };
         
         $scope.setBpm = function(bpm) {
-
             $scope.transport.bpm.value = bpm;
         };
 
@@ -113,8 +139,6 @@ angular
             $scope.startTransport();
             $scope.loadMetronome();
         };
-
-
         // Triggered and score arrays
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
             $scope.triggeredArr = triggered;
@@ -123,7 +147,6 @@ angular
         });
 
         $scope.activated = function (id) {
-
             return $scope.triggeredArr.indexOf(id) !== -1;
         };
 
@@ -174,25 +197,16 @@ angular
             });
 
         // Watchers
+            //Delay Watchers
+        $scope.$watch('DLY_wetDry', $scope.sendDelay)
+        $scope.$watch('DLY_feedback', $scope.sendDelay)
+        $scope.$watch('DLY_delayTime', $scope.sendDelay)
+
+
         $scope.$watch('activeDevice', DSP.plug);
         $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
         $scope.$watch('activeOscillator', synthEngine.setActiveOscillator);
         $scope.$watch('currBPM', $scope.setBpm);
         //$scope.$watch('position', DSP.updatePosition);
     }]);
-
-
-        // Support for computer keyboard
-        //$scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
-
-        // $scope.destroyUIMidi = function(pad){
-        //     var midiData =  new Uint8Array([128, pad, 127])
-        //     console.log("HI from mouse-up")
-        //     DSP.onmidimessage({data: midiData})        }
-        // $scope.createUIMidi = function(pad){
-        //    var midiData =  new Uint8Array([144, pad, 127])
-        //    //console.log(typeof midiData)
-        //    console.log("HI from mouse-down")
-
-        //    DSP.onmidimessage({data: midiData})
-        // }
+//DSP.onmidimessage({data: midiData})
