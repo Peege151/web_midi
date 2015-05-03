@@ -17,7 +17,16 @@ angular
         $scope.rawCounter = 0;
         $scope.position = "0:0:0";
         $scope.transport.bpm.value = 60;
-        $scope.play = DSP.play;
+        $scope.playing = false;
+        $scope.play = function() {
+            $scope.playing = true;
+            $scope.startTransport();
+            DSP.play();
+        };
+        $scope.stop = function() {
+            $scope.playing = false;
+            $scope.stopTransport();
+        };
 
 
         // Recording
@@ -84,7 +93,10 @@ angular
             return bars + ":" + quarters + ":" + sixteenths;
         };
 
+        $scope.metronomePlaying = false;
+
         $scope.loadMetronome = function() {
+            $scope.metronomePlaying = true;
 
             if($scope.metronome === null) {
                 $scope.metronome = new Tone.Player("../../sounds/woodblock.wav");
@@ -105,7 +117,7 @@ angular
         };
 
         $scope.pauseMetronome = function() {
-            //$scope.metronome.pause(1);
+            $scope.metronomePlaying = false;
             $scope.metronome.volume.value = -100;
         };
         

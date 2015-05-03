@@ -158,6 +158,11 @@ angular
             Tone.Transport.start();
         }
 
+        function _stop() {
+            
+            Tone.Transport.stop();
+        }
+
         function _recordStart() {
 
             self.recording = true;
@@ -188,6 +193,7 @@ angular
             recordStop: _recordStop,
             returnTriggered: _returnTriggered,
             returnScore: _returnScore,
+            stop: _stop,
             updatePosition: _updatePosition
             //switchKeyboard: _switchKeyboard
         };
