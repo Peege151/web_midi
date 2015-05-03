@@ -14,7 +14,8 @@ angular
             //"tempo": 100,
             "timeSignature": [4,4]
         }; 
-        self.start = 0;
+        //self.start = 0;
+        self.position = "";
         self.noteReceivedTime = null;
         self.noteReleasedTime = null;
         self.noteDuration = null;
@@ -51,6 +52,11 @@ angular
             }
         }
 
+        function _updatePosition(position) {
+            console.log(position);
+            self.position = position;
+        }
+
         function _onmidimessage(e) {
             // Convert MIDI values to Tone.js values
             var note = midiToNote(e.data[1]);
@@ -79,8 +85,8 @@ angular
                     // Add to the score if recording
                     if(self.recording) {
                         // Using Tone.js score values, start position, note, length in secs
-                        self.score.synth.push([self.start + ":0:0", note, self.noteDuration]);
-                        self.start++; 
+                        self.score.synth.push([self.position, note, self.noteDuration]);
+                        //self.start++; 
                     }
                 }
                 
@@ -175,7 +181,8 @@ angular
             recordStart: _recordStart,
             recordStop: _recordStop,
             returnTriggered: _returnTriggered,
-            returnScore: _returnScore
+            returnScore: _returnScore,
+            updatePosition: _updatePosition
             //switchKeyboard: _switchKeyboard
         };
     }]);

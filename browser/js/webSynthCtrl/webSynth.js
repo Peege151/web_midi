@@ -13,9 +13,29 @@ angular
 
         // Transport and metronome
         $scope.transport = Tone.Transport;
+        $scope.metronome = null;
+        $scope.rawCounter = 0;
+        $scope.position = "";
+        $scope.transport.bpm.value = 60;
+        $scope.play = DSP.play;
+        $scope.recordStart = DSP.recordStart;
+        $scope.recordStop = DSP.recordStop;
+        $scope.getRecordingStatus = DSP.getRecordingStatus;
+
         $scope.startTransport = function() { 
 
             $scope.transport.start();
+
+            // Tell where the transport is
+            $scope.transport.setInterval(function(time) {
+                // Translate raw count to Tone.js bar notation
+                $scope.position = $scope.timeIncrementer($scope.rawCounter);
+                // Tell the DSP factory
+                DSP.updatePosition($scope.position);
+
+                $scope.rawCounter++;
+                $scope.$digest();
+            }, "16n");
         };
 
         $scope.stopTransport = function() {
@@ -23,9 +43,32 @@ angular
             $scope.transport.stop();
         };
 
-        $scope.metronome = null;
-
-        $scope.position = 1;
+        // Take the rawCounter integer and convert it to bar notation for Tone.js
+        $scope.timeIncrementer = function (clicks) {
+            var sixteenths = -2;
+            var quarters = 0;
+            var bars = 0;
+            
+            for (var i = 0; i < clicks; i++) {
+                if (sixteenths < 3) {
+                    sixteenths++;
+                }
+                else {
+                    sixteenths = 0;
+                    
+                    if (quarters < 3) {
+                        quarters++;
+                    }
+                    else {
+                        quarters = 0;
+                        bars++;
+                    }
+                }
+            }
+            
+            //console.log(bars + ":" + quarters + ":" + sixteenths);
+            return bars + ":" + quarters + ":" + sixteenths;
+        };
 
         $scope.loadMetronome = function() {
 
@@ -36,8 +79,8 @@ angular
                     $scope.metronome.toMaster();
 
                     $scope.transport.setInterval(function(time){
-                        $scope.position++;
-                        $scope.$digest();
+                        // $scope.position++;
+                        // $scope.$digest();
                         $scope.metronome.start(time);
                     }, "4n");
                 };
@@ -51,8 +94,6 @@ angular
             //$scope.metronome.pause(1);
             $scope.metronome.volume.value = -100;
         };
-
-        $scope.transport.bpm.value = 60;
         
         $scope.setBpm = function(bpm) {
 
@@ -63,11 +104,6 @@ angular
             $scope.startTransport();
             $scope.loadMetronome();
         };
-
-        $scope.play = DSP.play;
-        $scope.recordStart = DSP.recordStart;
-        $scope.recordStop = DSP.recordStop;
-        $scope.getRecordingStatus = DSP.getRecordingStatus;
 
 
         // Triggered and score arrays
@@ -133,6 +169,7 @@ angular
         $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
         $scope.$watch('activeOscillator', synthEngine.setActiveOscillator);
         $scope.$watch('currBPM', $scope.setBpm);
+        //$scope.$watch('position', DSP.updatePosition);
     }]);
 
 
