@@ -8,7 +8,6 @@
 	    <button class="btn" ng-click="clearRecording()">Clear recording</button>
 	    {{ position }}
 	    {{ score }}
-
 	    <h1>Web MIDI API Drumpads</h1>
 	    <div class="form-inline">
 		    <div class="form-group">
@@ -22,13 +21,69 @@
 			    	<option ng-repeat="instrument in instruments">{{ instrument }}</option>
 		    	</select>
 		    </div>
-	        <div class="form-group">
+	        <div class="form-group" ng-show="activeInstrument">
 	        	<select ng-model="activeOscillator" class="form-control">
 	    	    	<option value="" disabled>Choose an oscillator...</option>
 	    	    	<option ng-repeat="osc in oscs">{{ osc }}</option>
 	        	</select>
 	        </div>
-	        <button ng-click="setDelay()"> Add Delay </button>
+			<div role="tabpanel" ng-show="activeInstrument">
+
+			  <!-- Nav tabs -->
+			  <ul class="nav nav-tabs" role="tablist">
+			    <li role="presentation" class="active"><a href="#ping-pong" aria-controls="ping-pong" role="tab" data-toggle="tab">Delay</a></li>
+			    <li role="presentation"><a href="#distortion" aria-controls="distortion" role="tab" data-toggle="tab">Distortion</a></li>
+			    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
+			    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+			  </ul>
+
+			  <!-- Tab panes -->
+			  <div class="tab-content">
+			    <div role="tabpanel" class="tab-pane active" id="ping-pong">
+			    	Ping-Pong Delay
+			    	<br />
+			    	<br />
+			    	<form name="delay" action="">
+			    		<div class="col-md-1 form-inline">
+			    			DelayTime
+			    		</div>
+			    		<div class="col-md-3 form-inline">
+	    			    	<select ng-model="DLY_delayTime">
+	    				    	<option value="" disabled>Delay Rate...</option>
+	    				    	<option value="16n"> 1/16th</option>
+	    				    	<option value="8n"> 1/8th</option>
+	    				    	<option value="4n"> 1/4th</option>
+	    				    	<option value="2n"> 1/2</option>
+	    			    	</select>
+			    		</div>
+			    		<div class="col-md-1 form-inline">
+			    			Feedback
+			    		</div>
+			    		<div class="col-md-3 form-inline">
+			    			<input ng-model="DLY_feedback" type="range" name="points" min="0" max="99">
+			    		</div>
+			    		<div class="col-md-1 form-inline">
+			    			Wet
+			    		</div>
+			    		<div class="col-md-3 form-inline">
+			    			<input type="range" ng-model="DLY_wetDry"  name="points" min="0" max="99">
+			    		</div>
+			    		<br />
+			    	</form>
+			    </div>
+			    <div role="tabpanel" class="tab-pane" id="distortion">Two</div>
+			    <div role="tabpanel" class="tab-pane" id="messages">Three</div>
+			    <div role="tabpanel" class="tab-pane" id="settings">Four</div>
+			  </div>
+
+			</div>
+			<script>
+			$('#myTab a[href="#ping-pong"]').tab('show') // Select tab by name
+			$('#myTab a:first').tab('show') // Select first tab
+			$('#myTab a:last').tab('show') // Select last tab
+			$('#myTab li:eq(2) a').tab('show') // Select third tab (0-indexed)
+			</script>
+
 		</div>
 		<hr>
 	    <!-- Transport and metronome -->

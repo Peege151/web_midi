@@ -7,7 +7,6 @@ angular
 		self.oscs = ["sawtooth", "square", "sine", "triangle"];
 		self.synth = null;
 
-
 		// Synth setting
 		function _setActiveInstrument(activeInstrument) {
 
@@ -22,15 +21,22 @@ angular
 	            	self.synth = null;  
 			}
 		}
-		function _setDelay() {
+		function _setDelay(dt, f, wd) {
+			if(self.synth.dly){
+				self.synth.dly = null;
+				self.synth.disconnect(self.synth.dly)
+				console.log("Wiped. Reinstantiating.")
+			}
+			console.log("f: ", f, " wd:", wd)
 			var dly = new Tone.PingPongDelay({
-			    "delayTime" : "8n",
-			    "feedback" : 0.6,
-			    "wet" : 0.5
+			    "delayTime" : dt,
+			    "feedback" : parseFloat(f / 100),
+			    "wet" : wd /100
 			}).toMaster(); 
-
+			console.log(dly.feedback)
+			self.synth.dly = dly
 			self.synth.connect(dly);
-
+			console.log(self.synth)
 
 		}
 		function _setActiveOscillator (activeOscillator){

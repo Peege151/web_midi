@@ -27,7 +27,17 @@ angular
         $scope.clearRecording = DSP.clearRecording;
 
 
+        // effects 
 
+        $scope.effects = [];   
+
+        $scope.DLY_wetDry = 0;
+        $scope.DLY_feedback = 0;
+        $scope.DLY_delayTime = "8n"
+
+        $scope.sendDelay = function(){
+            synthEngine.setDelay($scope.DLY_delayTime, $scope.DLY_feedback, $scope.DLY_wetDry)
+        }
         $scope.startTransport = function() { 
 
             $scope.transport.start();
@@ -105,7 +115,6 @@ angular
         };
         
         $scope.setBpm = function(bpm) {
-
             $scope.transport.bpm.value = bpm;
         };
 
@@ -113,8 +122,6 @@ angular
             $scope.startTransport();
             $scope.loadMetronome();
         };
-
-
         // Triggered and score arrays
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
             $scope.triggeredArr = triggered;
@@ -123,7 +130,6 @@ angular
         });
 
         $scope.activated = function (id) {
-
             return $scope.triggeredArr.indexOf(id) !== -1;
         };
 
@@ -174,25 +180,16 @@ angular
             });
 
         // Watchers
+            //Delay Watchers
+        $scope.$watch('DLY_wetDry', $scope.sendDelay)
+        $scope.$watch('DLY_feedback', $scope.sendDelay)
+        $scope.$watch('DLY_delayTime', $scope.sendDelay)
+
+
         $scope.$watch('activeDevice', DSP.plug);
         $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
         $scope.$watch('activeOscillator', synthEngine.setActiveOscillator);
         $scope.$watch('currBPM', $scope.setBpm);
         //$scope.$watch('position', DSP.updatePosition);
     }]);
-
-
-        // Support for computer keyboard
-        //$scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
-
-        // $scope.destroyUIMidi = function(pad){
-        //     var midiData =  new Uint8Array([128, pad, 127])
-        //     console.log("HI from mouse-up")
-        //     DSP.onmidimessage({data: midiData})        }
-        // $scope.createUIMidi = function(pad){
-        //    var midiData =  new Uint8Array([144, pad, 127])
-        //    //console.log(typeof midiData)
-        //    console.log("HI from mouse-down")
-
-        //    DSP.onmidimessage({data: midiData})
-        // }
+DSP.onmidimessage({data: midiData})
