@@ -24,8 +24,13 @@ angular
         $scope.recordStart = DSP.recordStart;
         $scope.recordStop = DSP.recordStop;
         $scope.getRecordingStatus = DSP.getRecordingStatus;
-        $scope.clearRecording = DSP.clearRecording;
-
+        
+        $scope.clearRecording = function() {
+            DSP.clearRecording();
+            $scope.score = DSP.returnScore(function(score) {
+                $scope.$digest();
+            });
+        };
 
 
         $scope.startTransport = function() { 
