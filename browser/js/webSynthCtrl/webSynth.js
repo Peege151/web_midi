@@ -133,12 +133,11 @@ angular
         $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
         $scope.$watch('activeOscillator', synthEngine.setActiveOscillator);
         $scope.$watch('currBPM', $scope.setBpm);
-
-        // Support for computer keyboard
-        //$scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
     }]);
 
 
+        // Support for computer keyboard
+        //$scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
 
         // $scope.destroyUIMidi = function(pad){
         //     var midiData =  new Uint8Array([128, pad, 127])
