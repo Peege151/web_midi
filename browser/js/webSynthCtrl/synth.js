@@ -53,7 +53,7 @@ angular
         }
 
         function _updatePosition(position) {
-            console.log(position);
+
             self.position = position;
         }
 

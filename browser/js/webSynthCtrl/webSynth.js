@@ -15,7 +15,7 @@ angular
         $scope.transport = Tone.Transport;
         $scope.metronome = null;
         $scope.rawCounter = 0;
-        $scope.position = "";
+        $scope.position = "0:0:0";
         $scope.transport.bpm.value = 60;
         $scope.play = DSP.play;
 
@@ -49,12 +49,12 @@ angular
             $scope.transport.stop();
             $scope.rawCounter = 0;
             $scope.position = $scope.timeIncrementer($scope.rawCounter);
-            $scope.$digest();
+            //$scope.$digest();
         };
 
         // Take the rawCounter integer and convert it to bar notation for Tone.js
         $scope.timeIncrementer = function (clicks) {
-            var sixteenths = -2;
+            var sixteenths = -1;
             var quarters = 0;
             var bars = 0;
             
