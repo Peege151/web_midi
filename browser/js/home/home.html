@@ -31,18 +31,8 @@
 
 		    	<!-- Transport and metronome -->
 		    	<div class="col-md-5">
-			    	<button class="btn pull-right" ng-click="play()" ng-if="!playing">
-				    	<i class="fa fa-play"></i> Play
-				    </button>
-					<button class="btn btn-success pull-right" ng-click="stop()" ng-if="playing">
-				    	<i class="fa fa-square"></i> Stop
-				    </button>
-
-				    <button class="btn pull-right" ng-if="!getRecordingStatus()" ng-click="recordStart()">
-				    	<i class="fa fa-circle"></i> Record
-				    </button>
-				    <button class="btn btn-danger pull-right" ng-if="getRecordingStatus()" ng-click="recordStop()">
-				    	<i class="fa fa-square"></i> Record
+			    	<button class="btn pull-right" ng-click="clearRecording()">
+				    	<i class="fa fa-trash-o"></i> Clear
 				    </button>
 
 				    <button ng-click="loadMetronome()" ng-if="!metronomePlaying" class="btn pull-right">
@@ -52,9 +42,20 @@
 			    		<i class="fa fa-clock-o"></i> Metronome
 			    	</button>
 
-				    <button class="btn pull-right" ng-click="clearRecording()">
-				    	<i class="fa fa-trash-o"></i> Clear
+			    	<button class="btn pull-right" ng-if="!getRecordingStatus()" ng-click="recordStart()">
+				    	<i class="fa fa-circle"></i> Record
 				    </button>
+				    <button class="btn btn-danger pull-right" ng-if="getRecordingStatus()" ng-click="recordStop()">
+				    	<i class="fa fa-square"></i> Record
+				    </button>
+
+			    	<button class="btn pull-right" ng-click="play()" ng-if="!playing">
+				    	<i class="fa fa-play"></i> Play
+				    </button>
+					<button class="btn btn-success pull-right" ng-click="stop()" ng-if="playing">
+				    	<i class="fa fa-square"></i> Stop
+				    </button>
+
 			    </div>
 			</div>
 
