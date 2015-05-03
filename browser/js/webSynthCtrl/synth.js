@@ -29,6 +29,7 @@ angular
             self.device = null;
 
         }
+        
         function _plug(device) {
             if(device) {
                 // unplug any already connected device
@@ -107,25 +108,6 @@ angular
             }
         }
 
-        // function _switchKeyboard(on) {
-        //     if(on !== undefined) {
-        //         _unplug();
-        //         Keyboard.disable();
-
-        //         if(on) {
-        //             Keyboard.enable();
-
-        //             self.device = $window;
-        //             self.device.onmessage = _onmessage;
-        //         } else {
-        //             /**
-        //             * TODO: look at plugging back the device
-        //             * if there was one selected before enabling the computer keyboard
-        //             */
-        //         }
-        //     }
-        // }
-
 
         // Convert MIDI values to Tone.js values
         function midiToNote(midiNoteNum){
@@ -197,3 +179,23 @@ angular
             //switchKeyboard: _switchKeyboard
         };
     }]);
+
+
+        // function _switchKeyboard(on) {
+        //     if(on !== undefined) {
+        //         _unplug();
+        //         Keyboard.disable();
+
+        //         if(on) {
+        //             Keyboard.enable();
+
+        //             self.device = $window;
+        //             self.device.onmessage = _onmessage;
+        //         } else {
+        //             /**
+        //             * TODO: look at plugging back the device
+        //             * if there was one selected before enabling the computer keyboard
+        //             */
+        //         }
+        //     }
+        // }

@@ -4,12 +4,11 @@ angular
         $scope.devices = [];
         $scope.instruments = synthEngine.instruments;
         $scope.oscs = synthEngine.oscs;
-        $scope.currBPM = 60;
+        $scope.currBPM = 80;
         $scope.score = [];
         $scope.DSP = DSP;
 
         $scope.setDelay = synthEngine.setDelay;
-        //$scope.synth = synthEngine.synth;
 
 
         // Transport and metronome
@@ -26,6 +25,8 @@ angular
 
         $scope.metronome = null;
 
+        $scope.position = 1;
+
         $scope.loadMetronome = function() {
 
             if($scope.metronome === null) {
@@ -35,6 +36,8 @@ angular
                     $scope.metronome.toMaster();
 
                     $scope.transport.setInterval(function(time){
+                        $scope.position++;
+                        $scope.$digest();
                         $scope.metronome.start(time);
                     }, "4n");
                 };
@@ -49,7 +52,12 @@ angular
             $scope.metronome.volume.value = -100;
         };
 
-        $scope.setBpm = $scope.transport.bpm.value = 60;
+        $scope.transport.bpm.value = 60;
+        
+        $scope.setBpm = function(bpm) {
+
+            $scope.transport.bpm.value = bpm;
+        };
 
         $scope.startAll = function() {
             $scope.startTransport();
@@ -78,7 +86,7 @@ angular
             if ($scope.triggeredArr.length) {
                 for(var i = 0; i < $scope.triggeredArr.length; i++){
                     for(var j=0; j< $scope.triggeredArr[i].length; j++){
-                        if($scope.triggeredArr[i][j] == pad) return true;
+                        if($scope.triggeredArr[i][j] === pad) return true;
                     }
                 }
             }
@@ -124,6 +132,7 @@ angular
         $scope.$watch('activeDevice', DSP.plug);
         $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
         $scope.$watch('activeOscillator', synthEngine.setActiveOscillator);
+        $scope.$watch('currBPM', $scope.setBpm);
 
         // Support for computer keyboard
         //$scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
