@@ -76,8 +76,8 @@ angular
 
         $scope.triggered = function(pad) {
             if ($scope.triggeredArr.length) {
-                for(var i = 0; i < $scope.triggeredArr.length; i++){
-                    for(var j=0; j< $scope.triggeredArr[i].length; j++){
+                for(var i = 0, len = $scope.triggeredArr.length; i < len; i++){
+                    for(var j=0, lentwo = $scope.triggeredArr[i].length; j < lentwo; j++){
                         if($scope.triggeredArr[i][j] == pad) return true;
                     }
                 }
