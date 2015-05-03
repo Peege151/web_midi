@@ -4,27 +4,80 @@ angular
         $scope.devices = [];
         $scope.instruments = synthEngine.instruments;
         $scope.oscs = synthEngine.oscs;
-        $scope.currBPM = 60;
+        $scope.currBPM = 80;
         $scope.score = [];
         $scope.DSP = DSP;
 
         $scope.setDelay = synthEngine.setDelay;
-        //$scope.synth = synthEngine.synth;
 
 
         // Transport and metronome
         $scope.transport = Tone.Transport;
+        $scope.metronome = null;
+        $scope.rawCounter = 0;
+        $scope.position = "0:0:0";
+        $scope.transport.bpm.value = 60;
+        $scope.play = DSP.play;
+
+
+        // Recording
+        $scope.recordStart = DSP.recordStart;
+        $scope.recordStop = DSP.recordStop;
+        $scope.getRecordingStatus = DSP.getRecordingStatus;
+        $scope.clearRecording = DSP.clearRecording;
+
+
+
         $scope.startTransport = function() { 
 
             $scope.transport.start();
+
+            // Tell where the transport is
+            $scope.transport.setInterval(function(time) {
+                // Translate raw count to Tone.js bar notation
+                $scope.position = $scope.timeIncrementer($scope.rawCounter);
+                // Tell the DSP factory
+                DSP.updatePosition($scope.position);
+
+                $scope.rawCounter++;
+                $scope.$digest();
+            }, "16n");
         };
 
         $scope.stopTransport = function() {
 
             $scope.transport.stop();
+            $scope.rawCounter = 0;
+            $scope.position = $scope.timeIncrementer($scope.rawCounter);
+            //$scope.$digest();
         };
 
-        $scope.metronome = null;
+        // Take the rawCounter integer and convert it to bar notation for Tone.js
+        $scope.timeIncrementer = function (clicks) {
+            var sixteenths = -1;
+            var quarters = 0;
+            var bars = 0;
+            
+            for (var i = 0; i < clicks; i++) {
+                if (sixteenths < 3) {
+                    sixteenths++;
+                }
+                else {
+                    sixteenths = 0;
+                    
+                    if (quarters < 3) {
+                        quarters++;
+                    }
+                    else {
+                        quarters = 0;
+                        bars++;
+                    }
+                }
+            }
+            
+            //console.log(bars + ":" + quarters + ":" + sixteenths);
+            return bars + ":" + quarters + ":" + sixteenths;
+        };
 
         $scope.loadMetronome = function() {
 
@@ -35,6 +88,8 @@ angular
                     $scope.metronome.toMaster();
 
                     $scope.transport.setInterval(function(time){
+                        // $scope.position++;
+                        // $scope.$digest();
                         $scope.metronome.start(time);
                     }, "4n");
                 };
@@ -48,18 +103,16 @@ angular
             //$scope.metronome.pause(1);
             $scope.metronome.volume.value = -100;
         };
+        
+        $scope.setBpm = function(bpm) {
 
-        $scope.setBpm = $scope.transport.bpm.value = 60;
+            $scope.transport.bpm.value = bpm;
+        };
 
         $scope.startAll = function() {
             $scope.startTransport();
             $scope.loadMetronome();
         };
-
-        $scope.play = DSP.play;
-        $scope.recordStart = DSP.recordStart;
-        $scope.recordStop = DSP.recordStop;
-        $scope.getRecordingStatus = DSP.getRecordingStatus;
 
 
         // Triggered and score arrays
@@ -78,7 +131,7 @@ angular
             if ($scope.triggeredArr.length) {
                 for(var i = 0, len = $scope.triggeredArr.length; i < len; i++){
                     for(var j=0, lentwo = $scope.triggeredArr[i].length; j < lentwo; j++){
-                        if($scope.triggeredArr[i][j] == pad) return true;
+                        if($scope.triggeredArr[i][j] === pad) return true;
                     }
                 }
             }
@@ -124,12 +177,13 @@ angular
         $scope.$watch('activeDevice', DSP.plug);
         $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
         $scope.$watch('activeOscillator', synthEngine.setActiveOscillator);
-
-        // Support for computer keyboard
-        //$scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
+        $scope.$watch('currBPM', $scope.setBpm);
+        //$scope.$watch('position', DSP.updatePosition);
     }]);
 
 
+        // Support for computer keyboard
+        //$scope.$watch('synth.useKeyboard', DSP.switchKeyboard);
 
         // $scope.destroyUIMidi = function(pad){
         //     var midiData =  new Uint8Array([128, pad, 127])

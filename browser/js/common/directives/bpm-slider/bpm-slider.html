@@ -1,9 +1,9 @@
-<input type="range" min="40" max="300" value="40"  onchange="showValue(this.value)" />
+<input ng-model="currBPM" type="range" min="40" max="300" value="{{ currBPM }}"/>
 <span id="range">{{currBPM}}</span>
 
-<script>
+<!-- <script>
 	function showValue(newValue){
 		var bpm = document.getElementById("range").innerHTML=newValue;
-		Tone.Transport.bpm.value = bpm
+		Tone.Transport.bpm.value = bpm;
 	}
-</script>
+</script> -->

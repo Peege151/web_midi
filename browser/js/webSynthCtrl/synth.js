@@ -14,7 +14,8 @@ angular
             //"tempo": 100,
             "timeSignature": [4,4]
         }; 
-        self.start = 0;
+        //self.start = 0;
+        self.position = "";
         self.noteReceivedTime = null;
         self.noteReleasedTime = null;
         self.noteDuration = null;
@@ -29,6 +30,7 @@ angular
             self.device = null;
 
         }
+        
         function _plug(device) {
             if(device) {
                 // unplug any already connected device
@@ -48,6 +50,11 @@ angular
                 //console.log(e);
                 _onmidimessage(e.data);
             }
+        }
+
+        function _updatePosition(position) {
+
+            self.position = position;
         }
 
         function _onmidimessage(e) {
@@ -78,8 +85,8 @@ angular
                     // Add to the score if recording
                     if(self.recording) {
                         // Using Tone.js score values, start position, note, length in secs
-                        self.score.synth.push([self.start + ":0:0", note, self.noteDuration]);
-                        self.start++; 
+                        self.score.synth.push([self.position, note, self.noteDuration]);
+                        //self.start++; 
                     }
                 }
                 
@@ -106,25 +113,6 @@ angular
                 }
             }
         }
-
-        // function _switchKeyboard(on) {
-        //     if(on !== undefined) {
-        //         _unplug();
-        //         Keyboard.disable();
-
-        //         if(on) {
-        //             Keyboard.enable();
-
-        //             self.device = $window;
-        //             self.device.onmessage = _onmessage;
-        //         } else {
-        //             /**
-        //             * TODO: look at plugging back the device
-        //             * if there was one selected before enabling the computer keyboard
-        //             */
-        //         }
-        //     }
-        // }
 
 
         // Convert MIDI values to Tone.js values
@@ -185,7 +173,13 @@ angular
             return self.recording;
         }
 
+        function _clearRecording() {
+            self.score.synth = [];
+        }
+
+
         return {
+            clearRecording: _clearRecording,
             getRecordingStatus: _getRecordingStatus,
             onmidimessage: _onmidimessage,
             play: _play,
@@ -193,7 +187,28 @@ angular
             recordStart: _recordStart,
             recordStop: _recordStop,
             returnTriggered: _returnTriggered,
-            returnScore: _returnScore
+            returnScore: _returnScore,
+            updatePosition: _updatePosition
             //switchKeyboard: _switchKeyboard
         };
     }]);
+
+
+        // function _switchKeyboard(on) {
+        //     if(on !== undefined) {
+        //         _unplug();
+        //         Keyboard.disable();
+
+        //         if(on) {
+        //             Keyboard.enable();
+
+        //             self.device = $window;
+        //             self.device.onmessage = _onmessage;
+        //         } else {
+        //             /**
+        //             * TODO: look at plugging back the device
+        //             * if there was one selected before enabling the computer keyboard
+        //             */
+        //         }
+        //     }
+        // }
