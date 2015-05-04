@@ -1,136 +1,173 @@
 <section id="home">
 	<div class="synth container" ng-controller="WebSynthCtrl">
 
-		<!-- {{ triggeredArr }} -->
-	    <button class="btn" ng-click="play()">Play</button>
-	    <button class="btn" ng-if="!getRecordingStatus()" ng-click="recordStart()"><i class="fa fa-circle"></i> Record</button>
-	    <button class="btn btn-danger" ng-if="getRecordingStatus()" ng-click="recordStop()"><i class="fa fa-square"></i> Record</button>
-	    <button class="btn" ng-click="clearRecording()">Clear recording</button>
 	    {{ position }}
 	    {{ score }}
 	    <h1>Web MIDI API Drumpads</h1>
-	    <div class="form-inline">
-		    <div class="form-group">
-		        <select ng-model="activeDevice" class="form-control" ng-options="device.manufacturer + ' ' + device.name for device in devices">
-		            <option value="" disabled>Choose a MIDI device...</option>
-		        </select>
-		    </div>
-		    <div class="form-group">
-		    	<select ng-model="activeInstrument" class="form-control">
-			    	<option value="" disabled>Choose a synth...</option>
-			    	<option ng-repeat="instrument in instruments">{{ instrument }}</option>
-		    	</select>
-		    </div>
-	        <div class="form-group" ng-show="activeInstrument">
-	        	<select ng-model="activeOscillator" class="form-control">
-	    	    	<option value="" disabled>Choose an oscillator...</option>
-	    	    	<option ng-repeat="osc in oscs">{{ osc }}</option>
-	        	</select>
+	    <div class="form-inline row">
+
+	    	<!-- Synth settings -->
+		    <div class="col-md-7">
+			    <div class="form-group">
+			        <select ng-model="activeDevice" class="form-control" ng-options="device.manufacturer + ' ' + device.name for device in devices">
+			            <option value="" disabled>Choose a MIDI device...</option>
+			        </select>
+			    </div>
+			    <div class="form-group">
+			    	<select ng-model="activeInstrument" class="form-control">
+				    	<option value="" disabled>Choose a synth...</option>
+				    	<option ng-repeat="instrument in instruments">{{ instrument }}</option>
+			    	</select>
+			    </div>
+		        <div class="form-group" ng-show="activeInstrument">
+		        	<select ng-model="activeOscillator" class="form-control">
+		    	    	<option value="" disabled>Choose an oscillator...</option>
+		    	    	<option ng-repeat="osc in oscs">{{ osc }}</option>
+		        	</select>
+		        </div>
 	        </div>
-			<div role="tabpanel" ng-show="activeInstrument">
 
-			  <!-- Nav tabs -->
-			  <ul class="nav nav-tabs" role="tablist">
-			    <li role="presentation" class="active"><a href="#ping-pong" aria-controls="ping-pong" role="tab" data-toggle="tab">Delay</a></li>
-			    <li role="presentation"><a href="#distortion" aria-controls="distortion" role="tab" data-toggle="tab">Distortion</a></li>
-			    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
-			    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
-			  </ul>
+	    	<!-- Transport and metronome -->
+	    	<div class="col-md-5">
+		    	<button class="btn pull-right" ng-click="clearRecording()">
+			    	<i class="fa fa-trash-o"></i> Clear
+			    </button>
 
-			  <!-- Tab panes -->
-			  <div class="tab-content">
-			    <div role="tabpanel" class="tab-pane active" id="ping-pong">
-			    	Ping-Pong Delay
-			    	<br />
-			    	<br />
-			    	<form name="delay" action="">
-			    		<div class="col-md-1 form-inline">
-			    			DelayTime
-			    		</div>
-			    		<div class="col-md-3 form-inline">
-	    			    	<select ng-model="DLY_delayTime">
-	    				    	<option value="" disabled>Delay Rate...</option>
-	    				    	<option value="16n"> 1/16th</option>
-	    				    	<option value="8n"> 1/8th</option>
-	    				    	<option value="4n"> 1/4th</option>
-	    				    	<option value="2n"> 1/2</option>
-	    			    	</select>
-			    		</div>
-			    		<div class="col-md-1 form-inline">
-			    			Feedback
-			    		</div>
-			    		<div class="col-md-3 form-inline">
-			    			<input ng-model="DLY_feedback" type="range" name="points" min="0" max="99">
-			    		</div>
-			    		<div class="col-md-1 form-inline">
-			    			Wet
-			    		</div>
-			    		<div class="col-md-3 form-inline">
-			    			<input type="range" ng-model="DLY_wetDry"  name="points" min="0" max="99">
-			    		</div>
-			    		<br />
-			    	</form>
-			    </div>
-			    <div role="tabpanel" class="tab-pane" id="distortion">
-			    	Distortion
-			    	<br />
-			    	<br />
-			    	<form name="distortion" action="">
-			    		<div class="col-md-1 form-inline">
-			    			Distortion
-			    		</div>
-			    		<div class="col-md-3 form-inline">
-			    			<input ng-model="DLY_feedback" type="range" name="points" min="0" max="99">
-			    		</div>
-			    		<div class="col-md-1 form-inline">
-			    			Wet
-			    		</div>
-			    		<div class="col-md-3 form-inline">
-			    			<input type="range" ng-model="DLY_wetDry"  name="points" min="0" max="99">
-			    		</div>
-			    		<br />
-			    	</form>	
-			    </div>
 
-			  </div>
+			    <button ng-click="loadMetronome()" ng-if="!metronomePlaying" class="btn pull-right">
+		    		<i class="fa fa-clock-o"></i> Metronome
+		    	</button>
+		    	<button ng-click="pauseMetronome()" ng-if="metronomePlaying" class="btn btn-success pull-right">
+		    		<i class="fa fa-clock-o"></i> Metronome
+		    	</button>
 
-			</div>
-			<script>
-			$('#myTab a[href="#ping-pong"]').tab('show') // Select tab by name
-			$('#myTab a:first').tab('show') // Select first tab
-			$('#myTab a:last').tab('show') // Select last tab
-			$('#myTab li:eq(2) a').tab('show') // Select third tab (0-indexed)
-			</script>
 
+		    	<button class="btn pull-right" ng-if="!getRecordingStatus()" ng-click="recordStart()">
+			    	<i class="fa fa-circle"></i> Record
+			    </button>
+			    <button class="btn btn-danger pull-right" ng-if="getRecordingStatus()" ng-click="recordStop()">
+			    	<i class="fa fa-square"></i> Record
+			    </button>
+
+		    	<button class="btn pull-right" ng-click="play()" ng-if="!playing">
+			    	<i class="fa fa-play"></i> Play
+			    </button>
+				<button class="btn btn-success pull-right" ng-click="stop()" ng-if="playing">
+			    	<i class="fa fa-square"></i> Stop
+			    </button>
+		    </div>
 		</div>
 		<hr>
-	    <!-- Transport and metronome -->
-	    <div class="col-lg-12 col-md-12 col-sm-12">
-	    	<button ng-click="startTransport()" class="btn">Start transport</button>
-	    	<button ng-click="stopTransport()" class="btn">Stop transport</button>
-	    	<button ng-click="loadMetronome()" class="btn">Start metronome</button>
-	    	<button ng-click="pauseMetronome()" class="btn">Stop metronome</button>
-		</div>
-		<!-- BPM Directive-->
-		<bpm-slider></bpm-slider>
 
-		<!-- Drumpads -->
-	    <div class="col-lg-12 col-md-12 col-sm-12">
-		    <div class="korg-border" ng-show="activeDevice">
-		    	<div class="pad-row" >
-		    		<span class="pad"ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [72,73,74,75]">
-		    		</span>
-		    	</div>
-		    	<div class="pad-row">
-		    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [68,69,70,71]"></span>	
-		    	</div>
-		    	<div class="pad-row">
-		    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [64,65,66,67]"></span>
-		    	</div>
-		    	<div class="pad-row">
-		    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [60,61,62,63]"></span>
-		    	</div>
-		    </div>
+	    <div class="row">
+
+	    	<!-- Drumpads -->
+		    <div class="col-md-8">
+			    <div class="korg-border" ng-show="activeDevice">
+			    	<div class="pad-row" >
+			    		<span class="pad"ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [72,73,74,75]">
+			    		</span>
+			    	</div>
+			    	<div class="pad-row">
+			    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [68,69,70,71]"></span>	
+			    	</div>
+			    	<div class="pad-row">
+			    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [64,65,66,67]"></span>
+			    	</div>
+			    	<div class="pad-row">
+			    		<span class="pad" ng-class="{red: triggered(pad)}" id="{{pad}}" ng-repeat="pad in [60,61,62,63]"></span>
+			    	</div>
+			    </div>
+			</div>
+
+			<!-- Settings -->
+			<div class="col-md-4">
+				<div ng-show="activeInstrument" class="row well well-sm well-settings">
+					<bpm-slider></bpm-slider>
+				</div>
+
+				<div ng-show="activeInstrument" class="row well well-sm well-settings">
+					<div class="col-md-12 text-center"><strong>Effects</strong></div>
+					<div class="col-md-12">
+						<div role="tabpanel">
+							<!-- Nav tabs -->
+							<ul class="nav nav-tabs" role="tablist">
+								<li role="presentation" class="active"><a href="#ping-pong" aria-controls="ping-pong" role="tab" data-toggle="tab">Delay</a></li>
+							    <li role="presentation"><a href="#distortion" aria-controls="distortion" role="tab" data-toggle="tab">Distortion</a></li>
+							    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
+							    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+							</ul>
+
+							<!-- Tab panes -->
+							<div class="tab-content">
+								<div role="tabpanel" class="tab-pane active" id="ping-pong">
+							    	<form name="delay" action="">
+							    		<!-- Column titles -->
+							    		<div class="row">
+								    		<div class="col-md-4 text-center">
+								    			Delay Time
+								    		</div>
+								    		<div class="col-md-4 text-center">
+								    			Feedback
+								    		</div>
+								    		<div class="col-md-4 text-center">
+								    			Wet
+								    		</div>
+								    	</div>
+
+								    	<!-- Column settings -->
+								    	<div class="row">
+								    		<div class="col-md-4 form-inline">
+						    			    	<select ng-model="DLY_delayTime" class="form-control">
+						    				    	<option value="" disabled selected>Delay Rate...</option>
+						    				    	<option value="16n"> 1/16th</option>
+						    				    	<option value="8n"> 1/8th</option>
+						    				    	<option value="4n"> 1/4th</option>
+						    				    	<option value="2n"> 1/2</option>
+						    			    	</select>
+								    		</div>
+								    		<div class="col-md-4 form-inline">
+								    			<input ng-model="DLY_feedback" class="slider" type="range" name="points" min="0" max="99">
+								    		</div>
+								    		<div class="col-md-4 form-inline">
+								    			<input type="range" ng-model="DLY_wetDry" class="slider" name="points" min="0" max="99">
+								    		</div>
+							    		</div>
+							    	</form>
+							    </div>
+
+							    <div role="tabpanel" class="tab-pane" id="distortion">
+							    	    	<form name="delay" action="">
+							    	    		<!-- Column titles -->
+							    	    		<div class="row">
+							    		    		<div class="col-md-4 text-center">
+							    		    			Distortion
+							    		    		</div>
+							    		    	</div>
+
+							    		    	<!-- Column settings -->
+							    		    	<div class="row">
+							    		    		<div class="col-md-12 form-inline">
+							    		    			<input ng-model="DST_distortion" class="slider" type="range" name="points" min="0" max="99">
+							    		    		</div>
+							    	    		</div>
+							    	    	</form>		
+							    </div>
+					    	    						    
+							    <div role="tabpanel" class="tab-pane" id="messages">Three</div>
+							    <div role="tabpanel" class="tab-pane" id="settings">Four</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<script>
+					$('#myTab a[href="#ping-pong"]').tab('show'); // Select tab by name
+					$('#myTab a:first').tab('show'); // Select first tab
+					$('#myTab a:last').tab('show'); // Select last tab
+					$('#myTab li:eq(2) a').tab('show'); // Select third tab (0-indexed)
+				</script>
+			</div>
 		</div>
 	</div>
 </section>

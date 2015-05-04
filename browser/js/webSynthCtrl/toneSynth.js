@@ -21,35 +21,36 @@ angular
 	            	self.synth = null;  
 			}
 		}
-		function _setDelay(dt, f, wd) {
-			if(self.synth.dly){
-				self.synth.dly = null;
-				self.synth.disconnect(self.synth.dly)
-				console.log("Wiped. Reinstantiating.")
+		function activateEffects(){
+			if (self.synth){
+				for(var key in self.synth.effects){
+					console.log(self.synth.effects[key])
+					self.synth.connect(self.synth.effects[key])
+				}
+				console.log("activating effects");
 			}
+		}
+		function _setDelay(dt, f, wd) {
 			var dly = new Tone.PingPongDelay({
 			    "delayTime" : dt,
 			    "feedback" : parseFloat(f / 100),
-			    "wet" : wd /100
+			    "wet" : wd / 100
 			}).toMaster(); 
-			self.synth.dly = dly
-			self.synth.connect(dly);
-
-		}
-		function _setDistortion(dist, wd) {
-			if(self.synth.dst){
-				self.synth.dst = null;
-				self.synth.disconnect(self.synth.dst)
-				console.log("Wiped. Reinstantiating.")
+			if(self.synth){
+				self.synth.effects.dly = dly
+				activateEffects()
 			}
-			console.log("dist: ", dist, " wd:", wd)
-			var dly = new Tone.Distortion({
-			    "distortion" : dist / 100,
-			    "wet" : wd /100
+			
+		}
+		function _setDistortion(dist) {
+			var dst = new Tone.Distortion({
+			    "distortion" : parseFloat(dist / 100)
 			}).toMaster(); 
-			self.synth.dst = dst
-			self.synth.connect(dst);
-
+			if (self.synth){
+				self.synth.dst = dst
+				self.synth.effects.dst = (dst)
+				activateEffects()
+			}
 		}
 		function _setActiveOscillator (activeOscillator){
 			if(self.synth){	
@@ -65,6 +66,10 @@ angular
 			self.isPolyphonic = false;
 			self.synthType = "Mono";
 			self.synth = new Tone.MonoSynth().toMaster();
+			self.synth.effects = {
+				dly: null,
+				dst: null
+			};
 
 		}
 
@@ -72,6 +77,7 @@ angular
 			self.synthType = "Poly";
 			self.isPolyphonic = true;
 			self.synth = new Tone.PolySynth(6, Tone.MonoSynth).toMaster();
+			self.synth.effects = [];
 		}
 
 

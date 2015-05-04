@@ -17,15 +17,29 @@ angular
         $scope.rawCounter = 0;
         $scope.position = "0:0:0";
         $scope.transport.bpm.value = 60;
-        $scope.play = DSP.play;
+        $scope.playing = false;
+        $scope.play = function() {
+            $scope.playing = true;
+            $scope.startTransport();
+            DSP.play();
+        };
+        $scope.stop = function() {
+            $scope.playing = false;
+            $scope.stopTransport();
+        };
 
 
         // Recording
         $scope.recordStart = DSP.recordStart;
         $scope.recordStop = DSP.recordStop;
         $scope.getRecordingStatus = DSP.getRecordingStatus;
-        $scope.clearRecording = DSP.clearRecording;
-
+        
+        $scope.clearRecording = function() {
+            DSP.clearRecording();
+            $scope.score = DSP.returnScore(function(score) {
+                $scope.$digest();
+            });
+        };
 
         // effects 
 
@@ -35,14 +49,13 @@ angular
         $scope.DLY_feedback = 0;
         $scope.DLY_delayTime = "8n"
 
-        $scope.DST.distortion = 0;
-        $scope.DST_wetDry = 0;
+        $scope.DST_distortion = 0;
 
         $scope.sendDelay = function(){
             synthEngine.setDelay($scope.DLY_delayTime, $scope.DLY_feedback, $scope.DLY_wetDry)
         }
         $scope.sendDistortion = function(){
-            synthEngine.setDistortion($scope.DST_distortion, $scope.DST_wetDry)
+            synthEngine.setDistortion($scope.DST_distortion)
         }
         $scope.startTransport = function() { 
 
@@ -95,7 +108,10 @@ angular
             return bars + ":" + quarters + ":" + sixteenths;
         };
 
+        $scope.metronomePlaying = false;
+
         $scope.loadMetronome = function() {
+            $scope.metronomePlaying = true;
 
             if($scope.metronome === null) {
                 $scope.metronome = new Tone.Player("../../sounds/woodblock.wav");
@@ -116,7 +132,7 @@ angular
         };
 
         $scope.pauseMetronome = function() {
-            //$scope.metronome.pause(1);
+            $scope.metronomePlaying = false;
             $scope.metronome.volume.value = -100;
         };
         
@@ -190,7 +206,8 @@ angular
         $scope.$watch('DLY_wetDry', $scope.sendDelay)
         $scope.$watch('DLY_feedback', $scope.sendDelay)
         $scope.$watch('DLY_delayTime', $scope.sendDelay)
-
+            //Dist Watchers
+        $scope.$watch('DST_distortion', $scope.sendDistortion)
 
         $scope.$watch('activeDevice', DSP.plug);
         $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
@@ -198,4 +215,4 @@ angular
         $scope.$watch('currBPM', $scope.setBpm);
         //$scope.$watch('position', DSP.updatePosition);
     }]);
-DSP.onmidimessage({data: midiData})
+//DSP.onmidimessage({data: midiData})
