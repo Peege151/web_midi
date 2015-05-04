@@ -72,7 +72,7 @@ angular
                 $scope.position = $scope.timeIncrementer($scope.rawCounter);
             }
             else $scope.countIn = false;
-
+           
             $scope.transport.start();
             
             // Tell where the transport is
@@ -90,8 +90,9 @@ angular
                 if($scope.countIn) {
                     if($scope.rawCounter === 0) {
                         console.log("Playing from $scope.startTransport()");
+                        Tone.Transport.start("0:0:0");
                         DSP.play();
-                        $scope.$digest();
+                        //$scope.$digest();
                     }
                 }
 

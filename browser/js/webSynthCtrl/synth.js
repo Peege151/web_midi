@@ -177,8 +177,6 @@ angular
 
         function _clearRecording() {
             self.score.synth = [];
-            console.log(self.score.synth);
-            console.log(Tone.Transport.state);
 
             Tone.Transport.clearTimelines();
         }
