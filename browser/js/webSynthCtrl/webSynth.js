@@ -90,7 +90,7 @@ angular
                 if($scope.countIn) {
                     if($scope.rawCounter === 0) {
                         console.log("Playing from $scope.startTransport()");
-                        Tone.Transport.start("0:0:0");
+                        Tone.Transport.setTransportTime(0);
                         DSP.play();
                         //$scope.$digest();
                     }
