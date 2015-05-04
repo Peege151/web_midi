@@ -71,9 +71,27 @@
 			    		<br />
 			    	</form>
 			    </div>
-			    <div role="tabpanel" class="tab-pane" id="distortion">Two</div>
-			    <div role="tabpanel" class="tab-pane" id="messages">Three</div>
-			    <div role="tabpanel" class="tab-pane" id="settings">Four</div>
+			    <div role="tabpanel" class="tab-pane" id="distortion">
+			    	Distortion
+			    	<br />
+			    	<br />
+			    	<form name="distortion" action="">
+			    		<div class="col-md-1 form-inline">
+			    			Distortion
+			    		</div>
+			    		<div class="col-md-3 form-inline">
+			    			<input ng-model="DLY_feedback" type="range" name="points" min="0" max="99">
+			    		</div>
+			    		<div class="col-md-1 form-inline">
+			    			Wet
+			    		</div>
+			    		<div class="col-md-3 form-inline">
+			    			<input type="range" ng-model="DLY_wetDry"  name="points" min="0" max="99">
+			    		</div>
+			    		<br />
+			    	</form>	
+			    </div>
+
 			  </div>
 
 			</div>

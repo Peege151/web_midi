@@ -35,8 +35,14 @@ angular
         $scope.DLY_feedback = 0;
         $scope.DLY_delayTime = "8n"
 
+        $scope.DST.distortion = 0;
+        $scope.DST_wetDry = 0;
+
         $scope.sendDelay = function(){
             synthEngine.setDelay($scope.DLY_delayTime, $scope.DLY_feedback, $scope.DLY_wetDry)
+        }
+        $scope.sendDistortion = function(){
+            synthEngine.setDistortion($scope.DST_distortion, $scope.DST_wetDry)
         }
         $scope.startTransport = function() { 
 

@@ -27,16 +27,28 @@ angular
 				self.synth.disconnect(self.synth.dly)
 				console.log("Wiped. Reinstantiating.")
 			}
-			console.log("f: ", f, " wd:", wd)
 			var dly = new Tone.PingPongDelay({
 			    "delayTime" : dt,
 			    "feedback" : parseFloat(f / 100),
 			    "wet" : wd /100
 			}).toMaster(); 
-			console.log(dly.feedback)
 			self.synth.dly = dly
 			self.synth.connect(dly);
-			console.log(self.synth)
+
+		}
+		function _setDistortion(dist, wd) {
+			if(self.synth.dst){
+				self.synth.dst = null;
+				self.synth.disconnect(self.synth.dst)
+				console.log("Wiped. Reinstantiating.")
+			}
+			console.log("dist: ", dist, " wd:", wd)
+			var dly = new Tone.Distortion({
+			    "distortion" : dist / 100,
+			    "wet" : wd /100
+			}).toMaster(); 
+			self.synth.dst = dst
+			self.synth.connect(dst);
 
 		}
 		function _setActiveOscillator (activeOscillator){
@@ -90,6 +102,7 @@ angular
 			noteOn: _noteOn,
 			noteOff: _noteOff,
 			setDelay: _setDelay,
+			setDistortion: _setDistortion,
 			setActiveInstrument: _setActiveInstrument,
 			setActiveOscillator: _setActiveOscillator,
 			setMonoSynth: _setMonoSynth,
