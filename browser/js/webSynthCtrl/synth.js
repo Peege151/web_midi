@@ -47,7 +47,6 @@ angular
         // Message handling
         function _onmessage(e) {
             if(e && e.data) {
-                //console.log(e);
                 _onmidimessage(e.data);
             }
         }
@@ -86,10 +85,8 @@ angular
                     if(self.recording && Tone.Transport.state === "started" && !self.countingInNow) {
                         // Using Tone.js score values, start position, note, length in secs
                         self.score.synth.push([self.position, note, self.noteDuration]);
-                        //self.start++; 
                     }
-                }
-                
+                }         
 
 
                 callback(self.triggered);
@@ -155,7 +152,7 @@ angular
             });
 
             // Start the transport
-            Tone.Transport.start();
+            //Tone.Transport.start();
         }
 
         function _stop() {
@@ -180,6 +177,10 @@ angular
 
         function _clearRecording() {
             self.score.synth = [];
+            console.log(self.score.synth);
+            console.log(Tone.Transport.state);
+
+            Tone.Transport.clearTimelines();
         }
 
         self.countingInNow = false;

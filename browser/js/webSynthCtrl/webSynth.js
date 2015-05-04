@@ -22,7 +22,12 @@ angular
         $scope.play = function() {
             $scope.playing = true;
             $scope.startTransport();
-            DSP.play();
+
+            // Start score replay immediately if not recording
+            if($scope.getRecordingStatus() === false) {
+                console.log("Playing from $scope.play()");
+                DSP.play();
+            }
         };
 
         $scope.stop = function() {
@@ -56,16 +61,18 @@ angular
         };
 
         $scope.intervalIdForPostition = null;
+        $scope.countIn = false;
 
         $scope.startTransport = function() { 
-            console.log($scope.getRecordingStatus());
 
             // Have a 4-note count-in if you are recording
             if($scope.getRecordingStatus() === true) {
+                $scope.countIn = true;
                 $scope.rawCounter = -16;
                 $scope.position = $scope.timeIncrementer($scope.rawCounter);
             }
-            //console.log($scope.rawCounter);
+            else $scope.countIn = false;
+
             $scope.transport.start();
             
             // Tell where the transport is
@@ -76,13 +83,20 @@ angular
                 DSP.updatePosition($scope.position);
 
                 // Tell the DSP when the rawcounter is less than 0 to prevent recording during count-in
-                if($scope.rawCounter <= 0) {
+                if($scope.rawCounter <= 0) {                  
                     DSP.countIn($scope.rawCounter);
                 }
 
-                $scope.rawCounter++;
-                //console.log($scope.rawCounter++);
+                if($scope.countIn) {
+                    if($scope.rawCounter === 0) {
+                        console.log("Playing from $scope.startTransport()");
+                        DSP.play();
+                        $scope.$digest();
+                    }
+                }
 
+
+                $scope.rawCounter++;
                 $scope.$digest();
             }, "16n");
         };
@@ -94,8 +108,6 @@ angular
             $scope.intervalIdForPostition = null;
             $scope.rawCounter = 0;
             $scope.position = $scope.timeIncrementer($scope.rawCounter);
-            console.log($scope.position);
-            //$scope.$digest();
         };
 
         // Take the rawCounter integer and convert it to bar notation for Tone.js
@@ -104,7 +116,7 @@ angular
                 return clicks;
             }
 
-            var sixteenths = 0;
+            var sixteenths = -1;
             var quarters = 0;
             var bars = 0;
             
@@ -125,7 +137,6 @@ angular
                 }
             }
             
-            //console.log(bars + ":" + quarters + ":" + sixteenths);
             return bars + ":" + quarters + ":" + sixteenths;
         };
 
