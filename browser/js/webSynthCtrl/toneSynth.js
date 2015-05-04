@@ -25,8 +25,9 @@ angular
 			if (self.synth){
 				self.synth.disconnect()
 				for(var key in self.synth.effects){
-					console.log(self.synth.effects[key])
-					self.synth.connect(self.synth.effects[key])
+					if(self.synth.effects[key]){
+						self.synth.connect(self.synth.effects[key])	
+					}
 				}
 				console.log("activating effects");
 			}
@@ -54,6 +55,14 @@ angular
 
 			}
 		}
+		function _setReverb(rs, d) {
+			var reverb = new Tone.Freeverb(rs, d).toMaster(); 
+			if (self.synth){
+				self.synth.effects.reverb = (reverb)
+				activateEffects()
+
+			}
+		}
 		function _setActiveOscillator (activeOscillator){
 			if(self.synth){	
 				self.synth.set({
@@ -70,7 +79,8 @@ angular
 			self.synth = new Tone.MonoSynth().toMaster();
 			self.synth.effects = {
 				dly: null,
-				dst: null
+				dst: null,
+				reverb: null
 			};
 
 		}
@@ -79,7 +89,11 @@ angular
 			self.synthType = "Poly";
 			self.isPolyphonic = true;
 			self.synth = new Tone.PolySynth(6, Tone.MonoSynth).toMaster();
-			self.synth.effects = [];
+			self.synth.effects = {
+				dly: null,
+				dst: null,
+				reverb: null
+			};		
 		}
 
 
@@ -111,6 +125,7 @@ angular
 			noteOff: _noteOff,
 			setDelay: _setDelay,
 			setDistortion: _setDistortion,
+			setReverb: _setReverb,
 			setActiveInstrument: _setActiveInstrument,
 			setActiveOscillator: _setActiveOscillator,
 			setMonoSynth: _setMonoSynth,

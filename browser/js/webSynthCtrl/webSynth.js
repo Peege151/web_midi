@@ -51,11 +51,16 @@ angular
 
         $scope.DST_distortion = 0;
 
+        $scope.RVB_roomsize =0;
+        $scope.RVB_dampening = 0;
         $scope.sendDelay = function(){
             synthEngine.setDelay($scope.DLY_delayTime, $scope.DLY_feedback, $scope.DLY_wetDry)
         }
         $scope.sendDistortion = function(){
             synthEngine.setDistortion($scope.DST_distortion)
+        }
+        $scope.sendReverb = function(){
+            synthEngine.setReverb($scope.RVB_roomsize /100, $scope.RVB_dampening / 100)
         }
         $scope.startTransport = function() { 
 
@@ -208,6 +213,10 @@ angular
         $scope.$watch('DLY_delayTime', $scope.sendDelay)
             //Dist Watchers
         $scope.$watch('DST_distortion', $scope.sendDistortion)
+
+        $scope.$watch('RVB_roomsize', $scope.sendReverb)
+        $scope.$watch('RVB_dampening', $scope.sendReverb)
+
 
         $scope.$watch('activeDevice', DSP.plug);
         $scope.$watch('activeInstrument', synthEngine.setActiveInstrument);
