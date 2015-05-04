@@ -33,12 +33,14 @@
 			    	<i class="fa fa-trash-o"></i> Clear
 			    </button>
 
+
 			    <button ng-click="loadMetronome()" ng-if="!metronomePlaying" class="btn pull-right">
 		    		<i class="fa fa-clock-o"></i> Metronome
 		    	</button>
 		    	<button ng-click="pauseMetronome()" ng-if="metronomePlaying" class="btn btn-success pull-right">
 		    		<i class="fa fa-clock-o"></i> Metronome
 		    	</button>
+
 
 		    	<button class="btn pull-right" ng-if="!getRecordingStatus()" ng-click="recordStart()">
 			    	<i class="fa fa-circle"></i> Record
@@ -92,8 +94,7 @@
 							<ul class="nav nav-tabs" role="tablist">
 								<li role="presentation" class="active"><a href="#ping-pong" aria-controls="ping-pong" role="tab" data-toggle="tab">Delay</a></li>
 							    <li role="presentation"><a href="#distortion" aria-controls="distortion" role="tab" data-toggle="tab">Distortion</a></li>
-							    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
-							    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+							    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Reverb</a></li>
 							</ul>
 
 							<!-- Tab panes -->
@@ -134,9 +135,45 @@
 							    	</form>
 							    </div>
 
-							    <div role="tabpanel" class="tab-pane" id="distortion">Two</div>
-							    <div role="tabpanel" class="tab-pane" id="messages">Three</div>
-							    <div role="tabpanel" class="tab-pane" id="settings">Four</div>
+							    <div role="tabpanel" class="tab-pane" id="distortion">
+							    	    	<form name="delay" action="">
+							    	    		<!-- Column titles -->
+							    	    		<div class="row">
+							    		    		<div class="col-md-4 text-center">
+							    		    			Distortion
+							    		    		</div>
+							    		    	</div>
+
+							    		    	<!-- Column settings -->
+							    		    	<div class="row">
+							    		    		<div class="col-md-12 form-inline">
+							    		    			<input ng-model="DST_distortion" class="slider" type="range" name="points" min="0" max="99">
+							    		    		</div>
+							    	    		</div>
+							    	    	</form>		
+							    </div>   						    
+							    <div role="tabpanel" class="tab-pane" id="messages">
+					    	    	<form name="delay" action="">
+					    	    		<!-- Column titles -->
+					    	    		<div class="row">
+					    		    		<div class="col-md-6 text-center">
+					    		    			Roomsize
+					    		    		</div>
+					    		    		<div class="col-md-6 text-center">
+					    		    			Dampening
+					    		    		</div>
+					    		    	</div>
+					    		    	<!-- Column settings -->
+					    		    	<div class="row">
+					    		    		<div class="col-md-6 form-inline">
+					    		    			<input ng-model="RVB_roomsize" class="slider" type="range" name="points" min="0" max="99">
+					    		    		</div>
+					    		    		<div class="col-md-6 form-inline">
+					    		    			<input ng-model="RVB_dampening" class="slider" type="range" name="points" min="0" max="99">
+					    	    			</div>
+					    	    		</div>
+					    	    	</form>		
+							    </div>
 							</div>
 						</div>
 					</div>

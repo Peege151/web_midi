@@ -21,23 +21,47 @@ angular
 	            	self.synth = null;  
 			}
 		}
-		function _setDelay(dt, f, wd) {
-			if(self.synth.dly){
-				self.synth.dly = null;
-				self.synth.disconnect(self.synth.dly)
-				console.log("Wiped. Reinstantiating.")
+		function activateEffects(){
+			if (self.synth){
+				self.synth.disconnect()
+				for(var key in self.synth.effects){
+					if(self.synth.effects[key]){
+						self.synth.connect(self.synth.effects[key])	
+					}
+				}
+				console.log("activating effects");
 			}
-			console.log("f: ", f, " wd:", wd)
+		}
+		function _setDelay(dt, f, wd) {
 			var dly = new Tone.PingPongDelay({
 			    "delayTime" : dt,
 			    "feedback" : parseFloat(f / 100),
-			    "wet" : wd /100
+			    "wet" : wd / 100
 			}).toMaster(); 
-			console.log(dly.feedback)
-			self.synth.dly = dly
-			self.synth.connect(dly);
-			console.log(self.synth)
+			if(self.synth){
+				self.synth.effects.dly = dly
+				console.log("dly effect", self.synth.effects.dly)
+				activateEffects()
+			}
+			
+		}
+		function _setDistortion(dist) {
+			var dst = new Tone.Distortion({
+			    "distortion" : parseFloat(dist / 100)
+			}).toMaster(); 
+			if (self.synth){
+				self.synth.effects.dst = (dst)
+				activateEffects()
 
+			}
+		}
+		function _setReverb(rs, d) {
+			var reverb = new Tone.Freeverb(rs, d).toMaster(); 
+			if (self.synth){
+				self.synth.effects.reverb = (reverb)
+				activateEffects()
+
+			}
 		}
 		function _setActiveOscillator (activeOscillator){
 			if(self.synth){	
@@ -53,6 +77,11 @@ angular
 			self.isPolyphonic = false;
 			self.synthType = "Mono";
 			self.synth = new Tone.MonoSynth().toMaster();
+			self.synth.effects = {
+				dly: null,
+				dst: null,
+				reverb: null
+			};
 
 		}
 
@@ -60,6 +89,11 @@ angular
 			self.synthType = "Poly";
 			self.isPolyphonic = true;
 			self.synth = new Tone.PolySynth(6, Tone.MonoSynth).toMaster();
+			self.synth.effects = {
+				dly: null,
+				dst: null,
+				reverb: null
+			};		
 		}
 
 
@@ -90,6 +124,8 @@ angular
 			noteOn: _noteOn,
 			noteOff: _noteOff,
 			setDelay: _setDelay,
+			setDistortion: _setDistortion,
+			setReverb: _setReverb,
 			setActiveInstrument: _setActiveInstrument,
 			setActiveOscillator: _setActiveOscillator,
 			setMonoSynth: _setMonoSynth,
