@@ -23,6 +23,7 @@ angular
 		}
 		function activateEffects(){
 			if (self.synth){
+				self.synth.disconnect()
 				for(var key in self.synth.effects){
 					console.log(self.synth.effects[key])
 					self.synth.connect(self.synth.effects[key])
@@ -38,6 +39,7 @@ angular
 			}).toMaster(); 
 			if(self.synth){
 				self.synth.effects.dly = dly
+				console.log("dly effect", self.synth.effects.dly)
 				activateEffects()
 			}
 			
@@ -47,9 +49,9 @@ angular
 			    "distortion" : parseFloat(dist / 100)
 			}).toMaster(); 
 			if (self.synth){
-				self.synth.dst = dst
 				self.synth.effects.dst = (dst)
 				activateEffects()
+
 			}
 		}
 		function _setActiveOscillator (activeOscillator){
