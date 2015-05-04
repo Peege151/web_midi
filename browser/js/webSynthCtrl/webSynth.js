@@ -192,6 +192,7 @@ angular
         // Triggered and score arrays
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
             $scope.triggeredArr = triggered;
+
             $scope.activated(triggered[triggered.length-1]);
             $scope.$digest();
         });
@@ -204,9 +205,10 @@ angular
         $scope.triggered = function(pad) {
             if ($scope.triggeredArr.length) {
                 for(var i = 0, len = $scope.triggeredArr.length; i < len; i++){
-                    for(var j=0, lentwo = $scope.triggeredArr[i].length; j < lentwo; j++){
-                        if($scope.triggeredArr[i][j] === pad) return true;
-                    }
+                    if ($scope.triggeredArr[i][1] === pad) return true;
+                    // for(var j=0, lentwo = $scope.triggeredArr[i].length; j < lentwo; j++){
+                    //     if($scope.triggeredArr[i][j] === pad) return true;
+                    // }
                 }
             }
             return false;
