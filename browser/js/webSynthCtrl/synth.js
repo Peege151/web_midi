@@ -83,7 +83,7 @@ angular
                     });
                     
                     // Add to the score if recording and transport is on
-                    if(self.recording && Tone.Transport.state === "started") {
+                    if(self.recording && Tone.Transport.state === "started" && !self.countingInNow) {
                         // Using Tone.js score values, start position, note, length in secs
                         self.score.synth.push([self.position, note, self.noteDuration]);
                         //self.start++; 
@@ -182,9 +182,19 @@ angular
             self.score.synth = [];
         }
 
+        self.countingInNow = false;
+
+        function _countIn(rawCount) {
+            if(rawCount < 0) {
+                self.countingInNow = true;
+            }
+            else self.countingInNow = false;
+        }
+
 
         return {
             clearRecording: _clearRecording,
+            countIn: _countIn,
             getRecordingStatus: _getRecordingStatus,
             onmidimessage: _onmidimessage,
             play: _play,

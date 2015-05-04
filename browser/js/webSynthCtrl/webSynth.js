@@ -18,11 +18,13 @@ angular
         $scope.position = "0:0:0";
         $scope.transport.bpm.value = 60;
         $scope.playing = false;
+
         $scope.play = function() {
             $scope.playing = true;
             $scope.startTransport();
             DSP.play();
         };
+
         $scope.stop = function() {
             $scope.playing = false;
             $scope.stopTransport();
@@ -47,23 +49,40 @@ angular
 
         $scope.DLY_wetDry = 0;
         $scope.DLY_feedback = 0;
-        $scope.DLY_delayTime = "8n"
+        $scope.DLY_delayTime = "8n";
 
         $scope.sendDelay = function(){
-            synthEngine.setDelay($scope.DLY_delayTime, $scope.DLY_feedback, $scope.DLY_wetDry)
-        }
+            synthEngine.setDelay($scope.DLY_delayTime, $scope.DLY_feedback, $scope.DLY_wetDry);
+        };
+
+        $scope.intervalIdForPostition = null;
+
         $scope.startTransport = function() { 
+            console.log($scope.getRecordingStatus());
 
+            // Have a 4-note count-in if you are recording
+            if($scope.getRecordingStatus() === true) {
+                $scope.rawCounter = -16;
+                $scope.position = $scope.timeIncrementer($scope.rawCounter);
+            }
+            //console.log($scope.rawCounter);
             $scope.transport.start();
-
+            
             // Tell where the transport is
-            $scope.transport.setInterval(function(time) {
+            $scope.intervalIdForPostition = $scope.transport.setInterval(function(time) {
                 // Translate raw count to Tone.js bar notation
                 $scope.position = $scope.timeIncrementer($scope.rawCounter);
-                // Tell the DSP factory
+                // Tell the DSP factory the bar notation so it can record it in the score
                 DSP.updatePosition($scope.position);
 
+                // Tell the DSP when the rawcounter is less than 0 to prevent recording during count-in
+                if($scope.rawCounter <= 0) {
+                    DSP.countIn($scope.rawCounter);
+                }
+
                 $scope.rawCounter++;
+                //console.log($scope.rawCounter++);
+
                 $scope.$digest();
             }, "16n");
         };
@@ -71,14 +90,21 @@ angular
         $scope.stopTransport = function() {
 
             $scope.transport.stop();
+            $scope.transport.clearInterval($scope.intervalIdForPostition);
+            $scope.intervalIdForPostition = null;
             $scope.rawCounter = 0;
             $scope.position = $scope.timeIncrementer($scope.rawCounter);
+            console.log($scope.position);
             //$scope.$digest();
         };
 
         // Take the rawCounter integer and convert it to bar notation for Tone.js
         $scope.timeIncrementer = function (clicks) {
-            var sixteenths = -1;
+            if(clicks < 0) {
+                return clicks;
+            }
+
+            var sixteenths = 0;
             var quarters = 0;
             var bars = 0;
             
@@ -132,6 +158,7 @@ angular
         };
         
         $scope.setBpm = function(bpm) {
+
             $scope.transport.bpm.value = bpm;
         };
 
@@ -139,6 +166,7 @@ angular
             $scope.startTransport();
             $scope.loadMetronome();
         };
+
         // Triggered and score arrays
         $scope.triggeredArr = DSP.returnTriggered(function(triggered){
             $scope.triggeredArr = triggered;
@@ -147,6 +175,7 @@ angular
         });
 
         $scope.activated = function (id) {
+
             return $scope.triggeredArr.indexOf(id) !== -1;
         };
 
@@ -198,9 +227,9 @@ angular
 
         // Watchers
             //Delay Watchers
-        $scope.$watch('DLY_wetDry', $scope.sendDelay)
-        $scope.$watch('DLY_feedback', $scope.sendDelay)
-        $scope.$watch('DLY_delayTime', $scope.sendDelay)
+        $scope.$watch('DLY_wetDry', $scope.sendDelay);
+        $scope.$watch('DLY_feedback', $scope.sendDelay);
+        $scope.$watch('DLY_delayTime', $scope.sendDelay);
 
 
         $scope.$watch('activeDevice', DSP.plug);
